@@ -1,0 +1,90 @@
+.critmas {
+    --blue: #007bff;
+    --indigo: #6610f2;
+    --purple: #6f42c1;
+    --pink: #e83e8c;
+    --red: #dc3545;
+    --orange: #fd7e14;
+    --yellow: #ffc107;
+    --green: #28a745;
+    --teal: #20c997;
+    --cyan: #17a2b8;
+    --white: #fff;
+    --gray: #6c757d;
+    --gray-dark: #343a40;
+    --primary: #e40712;
+    --bs-primary: #e40712;
+    --secondary: #11620B;
+    --success: #28a745;
+    --info: #17a2b8;
+    --warning: #ffc107;
+    --danger: #dc3545;
+    --light: #f8f9fa;
+    --dark: #343a40;
+    --breakpoint-xs: 0;
+    --breakpoint-sm: 576px;
+    --breakpoint-md: 768px;
+    --breakpoint-lg: 992px;
+    --breakpoint-xl: 1200px;
+    --font-family-sans-serif: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    --font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+html, body {
+    background-image: url("../../assets/images/critmas/background.jpeg");
+    background-size: cover;
+    overflow: scroll;
+    max-height: 100vh;
+}
+
+html {
+    overflow: hidden;
+}
+
+.critmas .callout {
+    margin-bottom: var(--bs-gutter-x);
+    border-left: 3px solid var(--primary);
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.critmas .carousel .carousel-item {
+    /*max-height: 400px;*/
+}
+
+.critmas header {
+    padding: 0;
+}
+
+.critmas header .caption-container {
+    padding-top: var(--bs-gutter-x);
+    background: rgba(50,50,50, 0.3);
+    border-radius: 3px;
+}
+
+.critmas header p {
+    color: var(--primary);
+    text-shadow: 1px 1px rgba(50,50,50, 0.3);;
+}
+.critmas header h1 {
+    color: var(--primary);
+    font-family: Trattatello, fantasy;
+    text-shadow: 2px 2px rgba(50,50,50, 0.3);;
+}
+
+.critmas h4 {
+    margin-top: var(--bs-gutter-x);
+}
+
+.critmas h3, .critmas h4, .critmas h5 {
+    color: var(--secondary);
+}
+
+.critmas .btn-primary {
+    background-color: var(--primary);
+    border-color: var(--primary);
+}
+.critmas .btn-primary:hover {
+    background-color: var(--danger);
+    border-color: var(--danger);
+}
