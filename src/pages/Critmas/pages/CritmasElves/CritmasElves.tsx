@@ -1,8 +1,9 @@
 import React from 'react';
+import NameCloud from './components/NameCloud';
 import {Card, CardImg, Carousel, Col, Container, Row} from 'react-bootstrap';
 
-import imgElfToyMaker from '../../../assets/images/critmas/elves/toymaker.webp';
-import imgElfSecurity from '../../../assets/images/critmas/elves/security.webp';
+import imgElfToyMaker from 'assets/images/critmas/elves/toymaker.webp';
+import imgElfSecurity from 'assets/images/critmas/elves/security.webp';
 import {Link} from 'react-router-dom';
 
 function CritmasElves() {
@@ -26,7 +27,7 @@ function CritmasElves() {
 
                     <hr/>
 
-                    <h4>Role-playing Santa's Elves</h4>
+                    <h4 id="YourElf">Role-playing Santa's Elves</h4>
                     <p>
                         In this festive one-shot you will be playing as one of Santa's Elves
                     </p>
@@ -86,15 +87,7 @@ function CritmasElves() {
                         Elves have very Christmassy names that make little sense but show their childish nature.
                         Examples might include:
 
-                        <ul>
-                            <li>Buddy Partysledge</li>
-                            <li>Tinsel Plumwrap</li>
-                            <li>Cookie Morningkiss</li>
-                            <li>Trixie Grottocarol</li>
-                            <li>Starlight Puddinggame</li>
-                            <li>Twinkle Hollyhug</li>
-                            <li>Caramel Jinglebottom</li>
-                        </ul>
+                        <NameCloud />
 
                         Go crazy, but if you need some more inspiration try a generator like this one:&nbsp;
                         <a

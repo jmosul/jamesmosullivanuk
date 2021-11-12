@@ -3,9 +3,9 @@ import './Critmas.css';
 import critmasHeader from '../../assets/images/critmas/critmas.png';
 import {Carousel, Col, Container, Row} from 'react-bootstrap';
 
-import CritmasElves from './components/CritmasElves';
+import CritmasElves from './pages/CritmasElves/CritmasElves';
 import {Route, Routes} from 'react-router-dom';
-import CritmasGuide from './components/CritmasGuide';
+import CritmasGuide from './pages/CritmasGuide/CritmasGuide';
 
 function Critmas() {
     return (
