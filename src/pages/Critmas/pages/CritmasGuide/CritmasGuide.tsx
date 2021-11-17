@@ -1,15 +1,15 @@
 import React from 'react';
 import {Col, Container, Row} from 'react-bootstrap';
-import JoinBeyondCampaign from '../CritmasElves/components/JoinBeyondCampaign';
-import DndBeyondSettings from '../CritmasElves/components/DndBeyondSettings';
+import JoinBeyondCampaign from './components/JoinBeyondCampaign';
+import DndBeyondSettings from './components/DndBeyondSettings';
 import Heading from '../../../../componets/Heading';
-import RaceSettings from '../CritmasElves/components/RaceSettings';
-import PickAClass from '../CritmasElves/components/PickAClass';
-import AbilityScores from '../CritmasElves/components/AbilityScores';
-import Background from '../CritmasElves/components/Background';
-import Equipment from '../CritmasElves/components/Equipment';
-import Done from '../CritmasElves/components/Done';
-import LastBits from '../CritmasElves/components/LastBits';
+import RaceSettings from './components/RaceSettings';
+import PickAClass from './components/PickAClass';
+import AbilityScores from './components/AbilityScores';
+import Background from './components/Background';
+import Equipment from './components/Equipment';
+import Done from './components/Done';
+import LastBits from './components/LastBits';
 
 function CritmasGuide() {
     const dndBeyondJoinId = 24507462718679604;

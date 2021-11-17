@@ -1,10 +1,16 @@
 import React from 'react';
-import NameCloud from './components/NameCloud';
+import NameCloud from '../CritmasGuide/components/NameCloud';
 import {Card, CardImg, Carousel, Col, Container, Row} from 'react-bootstrap';
 
 import imgElfToyMaker from 'assets/images/critmas/elves/toymaker.webp';
 import imgElfSecurity from 'assets/images/critmas/elves/security.webp';
 import {Link} from 'react-router-dom';
+import ElfToyMaker from './componets/ElfToyMaker';
+import ElfSecurity from './componets/ElfSecurity';
+import ElfStable from './componets/ElfStable';
+import ElfLumberJack from './componets/ElfLumberJack';
+import ElfTechie from './componets/ElfTechie';
+import ElfMore from './componets/ElfMore';
 
 function CritmasElves() {
     return (
@@ -122,34 +128,27 @@ function CritmasElves() {
 
                     <Carousel className="elf-jobs">
                         <Carousel.Item>
-                            <Card>
-                                <CardImg src={imgElfToyMaker} alt="toy maker"/>
-                                <Card.Body>
-                                    <Card.Title>Toy Maker</Card.Title>
-                                    <p>The biggest industry in all of Christmas Town, and the most prestigious. You are the ones that bring joy to children every year. It's your toys that Santa delivers to the good girls and boys.</p>
-                                    <p>The toy makers are the celebrities of the North Pole, idolised by many who grow up with dreams of joining the Toy Makers</p>
-
-                                    <p>Are you a young spark looking to make their name? Or maybe an old timer who thinks toys where better when they were made out of wood and contained choking hazards?</p>
-                                </Card.Body>
-                            </Card>
+                            <ElfToyMaker />
                         </Carousel.Item>
 
                         <Carousel.Item>
-                            <Card>
-                                <CardImg src={imgElfSecurity} alt="security"/>
-                                <Card.Body>
-                                    <Card.Title>North Pole Security</Card.Title>
+                            <ElfSecurity />
+                        </Carousel.Item>
 
-                                    <p>Sure Christmas Town is a sweet place; full of wonder and ginger bread houses. Even the lollipop ladies brandish real giant lollipops.</p>
-                                    <p>
-                                        The borders of the town are another matter. It's an unforgiving icy wasteland out there and you know when the next nosy human is going to come looking.
-                                        Or when a vicious polar bear might he out hunting.
-                                        It's your job to keep the town safe, can't have Christmas if all the elves are dead now can we?
-                                    </p>
+                        <Carousel.Item>
+                            <ElfStable />
+                        </Carousel.Item>
 
-                                    <p>Are you an action seeker, or a gruff elf who has seen it all?</p>
-                                </Card.Body>
-                            </Card>
+                        <Carousel.Item>
+                            <ElfLumberJack />
+                        </Carousel.Item>
+
+                        <Carousel.Item>
+                            <ElfTechie />
+                        </Carousel.Item>
+
+                        <Carousel.Item>
+                            <ElfMore />
                         </Carousel.Item>
                     </Carousel>
                 </Col>

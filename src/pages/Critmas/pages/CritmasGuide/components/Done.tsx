@@ -1,7 +1,6 @@
 import React from 'react';
 import {Col, Container, Row} from 'react-bootstrap';
 import Heading from '../../../../../componets/Heading';
-import candySword from 'assets/images/critmas/elves/candy_sword.webp';
 
 function Background() {
     return (
