@@ -1,5 +1,5 @@
 import React from 'react';
-import NameCloud from '../CritmasGuide/components/NameCloud';
+import NameCloud from './componets/NameCloud';
 import {Card, CardImg, Carousel, Col, Container, Row} from 'react-bootstrap';
 
 import imgElfToyMaker from 'assets/images/critmas/elves/toymaker.webp';
@@ -70,7 +70,7 @@ function CritmasElves() {
                 <Col>
 
                     <h5>Your Elf</h5>
-                    <p>Some might think that all elves two a penny, toy makers the lot of them.</p>
+                    <p>Some might think that all elves are two a penny, toy makers the lot of them.</p>
 
                     <p>
                         But this could not be further from the truth. While it's true the majority of elves are

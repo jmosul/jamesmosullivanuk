@@ -22,7 +22,7 @@ function AbilityScores() {
                     </p>
 
                     <p>
-                        You can create two "Dice Roll Groups" and choose the one you prefer. Effectively this means you get to re-roll the ability score once.
+                        You can create two "Dice Roll Groups" and choose the one you prefer. Effectively this means you get to re-roll the ability scores once.
                     </p>
                 </Col>
                 <Col className="text-center" lg="8">

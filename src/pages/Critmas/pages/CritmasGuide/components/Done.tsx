@@ -20,7 +20,7 @@ function Background() {
                     </p>
 
                     <p>
-                        Let me know you've created your character, I might have questions :)
+                        Let me know when you've created your character, I might have questions :)
                     </p>
 
                     <p>
@@ -45,7 +45,7 @@ function Background() {
                            >Join on Roll20</a>
                     </p>
                     <p>
-                        <small>For new people, we use Roll20 for maps when in combat.  It will allow you to control your character when we play.</small>
+                        <small>For new people, we use Roll20 for battle maps when in combat.  It will allow you to control your character when we play.</small>
                     </p>
                 </Col>
             </Row>

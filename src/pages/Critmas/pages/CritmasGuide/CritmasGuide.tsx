@@ -26,7 +26,7 @@ function CritmasGuide() {
                         </p>
 
                         <p>
-                           Even if you have use dndbeyond before this guide will include some settings you will need to know.
+                           Even if you have used dndbeyond before this guide will include some settings you will need to know.
                         </p>
                     </Col>
                 </Row>

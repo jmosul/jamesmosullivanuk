@@ -9,7 +9,7 @@ function ElfStable() {
             <CardImg src={imgElfStable} alt="Stables"/>
             <Card.Body>
                 <Card.Title>Reindeer Supervisor</Card.Title>
-                <p>Those elves in the workshop may built the toys, but Santa wouldn't be able to get them to all the children of the world without Rudolph and Co.</p>
+                <p>Those elves in the workshop may build the toys, but Santa wouldn't be able to get them to all the children of the world without Rudolph and Co.</p>
                 <p>
                     And who makes sure those reindeer's are in tip top shape for their global circumnavigation?  Who feeds them?  Cares for them?  Who buffs that red nose?
                     <br/>Why you of course!

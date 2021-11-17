@@ -20,7 +20,7 @@ function DndBeyondSettings() {
                     </p>
 
                     <p>
-                        You can also choose a profile picture.  You can do this later too, but will need a profile picture so we can distinguish your character from others.
+                        <strong>Choose</strong> a profile picture.  You can do this later too, but you will need a profile picture so we can distinguish your character from others.
                         <br />Since D&D is all Tolkien-esque elves, I recommend uploading a custom avatar.
                     </p>
                 </Col>

@@ -12,8 +12,8 @@ function ElfSecurity() {
 
                 <p>Sure Christmas Town is a sweet place; full of wonder and ginger bread houses. Even the lollipop ladies brandish real giant lollipops.</p>
                 <p>
-                    The borders of the town are another matter. It's an unforgiving icy wasteland out there and you know when the next nosy human is going to come looking.
-                    Or when a vicious polar bear might he out hunting.
+                    The borders of the town are another matter. It's an unforgiving icy wasteland out there and you never know when the next nosy human is going to come looking.
+                    Or when a vicious polar bear might be out hunting.
                     It's your job to keep the town safe, can't have Christmas if all the elves are dead now can we?
                 </p>
 

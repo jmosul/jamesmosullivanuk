@@ -39,6 +39,10 @@ function JoinBeyondCampaign(props: JoinParams) {
                     <p>
                         Follow this guide as you go and we'll soon have your Christmas Elf ready to go!
                     </p>
+
+                    <p>
+                        You can change your character right up to the start of the game, so no need to worry!
+                    </p>
                 </Col>
                 <Col className="text-center">
                     <a
