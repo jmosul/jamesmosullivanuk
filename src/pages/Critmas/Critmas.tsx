@@ -28,7 +28,7 @@ function Critmas() {
                                     xs={{span: 10, offset: 1}}
                                 >
                                     <h1>The Night Before Critmas</h1>
-                                    <p>Can you save Christmas?</p>
+                                    <p>Here comes Christmas!</p>
                                 </Col>
                             </Row>
                         </Carousel.Caption>
