@@ -10,6 +10,7 @@ import ElfSecurity from './componets/ElfSecurity';
 import ElfStable from './componets/ElfStable';
 import ElfLumberJack from './componets/ElfLumberJack';
 import ElfTechie from './componets/ElfTechie';
+import ElfSpy from './componets/ElfSpy';
 import ElfMore from './componets/ElfMore';
 
 function CritmasElves() {
@@ -147,6 +148,10 @@ function CritmasElves() {
                             <ElfTechie />
                         </Carousel.Item>
 
+                        <Carousel.Item>
+                            <ElfSpy />
+                        </Carousel.Item>
+                        
                         <Carousel.Item>
                             <ElfMore />
                         </Carousel.Item>
