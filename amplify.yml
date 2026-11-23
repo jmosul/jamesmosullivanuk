@@ -3,6 +3,8 @@ frontend:
   phases:
     preBuild:
       commands:
+        # Official Node.js 26 Linux binaries require libatomic.
+        - rpm -q --quiet libatomic || sudo dnf install -y libatomic
         - nvm install
         - npm ci --include=dev
     build:

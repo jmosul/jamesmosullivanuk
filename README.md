@@ -12,10 +12,10 @@ Run `npm run lint` for Oxlint, `npm test` for Vitest, and `npm run build` for Ty
 
 ## Host the home page with AWS Amplify
 
-Amplify Hosting serves the static Vite build from `dist/`. The build uses
-`amplify.yml` and installs the Node.js version pinned in `.nvmrc` on the default
-Amazon Linux 2023 build image. It needs no AWS credentials or environment
-variables.
+Amplify Hosting serves the static Vite build from `dist/`. On the default
+Amazon Linux 2023 build image, `amplify.yml` ensures `libatomic` is installed
+and selects the Node.js version pinned in `.nvmrc`. The build needs no AWS
+credentials or environment variables.
 
 The `aws-amplify` JavaScript client is installed for future integrations. Static
 hosting requires no client initialization or `amplify_outputs.json`.
