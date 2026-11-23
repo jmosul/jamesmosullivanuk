@@ -3,7 +3,7 @@
 A React 18 and TypeScript site built with Vite.
 
 ```sh
-nvm use
+nvm install
 npm ci
 npm run dev
 ```
