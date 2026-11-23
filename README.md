@@ -1,6 +1,6 @@
 # James O’Sullivan
 
-A React 18 and TypeScript site built with Vite.
+A React 19 and TypeScript site built with Vite.
 
 ```sh
 nvm install
