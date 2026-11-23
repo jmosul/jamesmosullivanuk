@@ -1,6 +1,6 @@
 import { defineBackend } from '@aws-amplify/backend'
 import { RemovalPolicy, Stack } from 'aws-cdk-lib'
-import { AccountRecovery, UserPool } from 'aws-cdk-lib/aws-cognito'
+import { AccountRecovery, CfnUserPoolGroup, UserPool } from 'aws-cdk-lib/aws-cognito'
 
 const backend = defineBackend({})
 const authStack = backend.createStack('SharedAuth')
@@ -14,6 +14,11 @@ const userPool = new UserPool(authStack, 'SharedUserPool', {
   accountRecovery: AccountRecovery.EMAIL_ONLY,
   deletionProtection: true,
   removalPolicy: RemovalPolicy.RETAIN,
+})
+
+new CfnUserPoolGroup(authStack, 'SuperAdmins', {
+  groupName: 'SuperAdmins',
+  userPoolId: userPool.userPoolId,
 })
 
 backend.addOutput({
