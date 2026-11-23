@@ -1,9 +1,13 @@
-import React from 'react';
-import { render, screen } from '@testing-library/react';
-import App from './App';
+import { cleanup, render, screen } from '@testing-library/react'
+import { afterEach, expect, test } from 'vitest'
+import App from './App'
 
-test('renders learn react link', () => {
-  render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
-});
+afterEach(cleanup)
+
+test('renders the home page heading', () => {
+  render(<App />)
+
+  expect(screen.getByRole('heading', { level: 1 }).textContent).toBe(
+    'James O’Sullivan',
+  )
+})
