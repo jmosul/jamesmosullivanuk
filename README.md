@@ -89,6 +89,32 @@ client is rejected. Cognito uses its default email delivery for invites.
 
 [AWS guide to creating users as an administrator](https://docs.aws.amazon.com/cognito/latest/developerguide/how-to-create-user-accounts.html)
 
+### Grant James membership in `SuperAdmins`
+
+Deploy `main` to create the `SuperAdmins` group in the production pool. With
+admin access to that pool, use the invitation steps above to create James's
+account if needed. Open his user record in Cognito, verify it is his account,
+and copy its Cognito username. Set `JAMES_COGNITO_USERNAME` to that username
+and use the production `POOL_ID` and `POOL_REGION` from the deployment outputs.
+
+```sh
+aws cognito-idp admin-add-user-to-group --region "$POOL_REGION" --user-pool-id "$POOL_ID" \
+  --username "$JAMES_COGNITO_USERNAME" --group-name SuperAdmins
+
+aws cognito-idp list-users-in-group --region "$POOL_REGION" --user-pool-id "$POOL_ID" \
+  --group-name SuperAdmins --query 'Users[].Username'
+```
+
+Confirm James is the only member. Once a consuming app is connected, James can
+sign out and back in to get fresh tokens. Cognito includes `SuperAdmins` in the
+`cognito:groups` claim of newly issued ID and access tokens.
+
+The group has no IAM role and grants no AWS permissions. Apps can opt in by
+checking for `SuperAdmins` server-side in a validated Cognito token on specific
+admin actions. Existing resource ownership rules continue to apply.
+
+[AWS guide to Cognito user pool groups](https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-pools-user-groups.html)
+
 ### Connect a future app
 
 Use the production pool ID and Region from the `main` outputs. Provision a
