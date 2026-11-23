@@ -1,14 +1,21 @@
 version: 1
-frontend:
+backend:
   phases:
-    preBuild:
+    build:
       commands:
         # Official Node.js 26 Linux binaries require libatomic.
         - rpm -q --quiet libatomic || sudo dnf install -y libatomic
         - nvm install
         - npm ci --include=dev
+        - |
+          if [ "${AWS_BRANCH}" = "main" ]; then
+            npx ampx pipeline-deploy --branch "$AWS_BRANCH" --app-id "$AWS_APP_ID"
+          fi
+frontend:
+  phases:
     build:
       commands:
+        - nvm use
         - npm run build
   artifacts:
     baseDirectory: dist
