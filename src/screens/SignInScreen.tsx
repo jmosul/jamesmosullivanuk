@@ -1,6 +1,5 @@
 import { Authenticator } from '@aws-amplify/ui-react'
 import { Navigate } from 'react-router'
-import { useAuthStatus } from '../auth'
 import { paths } from '../routes'
 import '../styles/amplify-ui.css'
 
@@ -10,17 +9,13 @@ import '../styles/amplify-ui.css'
  * with a temporary password goes on to Amplify's new-password step.
  */
 export function SignInScreen({ configured }: { configured: boolean }) {
-  const status = useAuthStatus()
-
-  if (status === 'signedIn') {
-    return <Navigate to={paths.admin} replace />
-  }
-
   return (
     <main className="page">
       <h1 className="page-title">Sign in</h1>
       {configured ? (
-        <Authenticator hideSignUp />
+        <Authenticator hideSignUp>
+          <Navigate to={paths.admin} replace />
+        </Authenticator>
       ) : (
         <p className="card" role="status">
           Sign-in isn’t set up here: there’s no <code>amplify_outputs.json</code>. Run{' '}

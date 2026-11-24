@@ -1,4 +1,4 @@
-import { act, cleanup, fireEvent, render, screen } from '@testing-library/react'
+import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import * as auth from 'aws-amplify/auth'
 import { Hub } from 'aws-amplify/utils'
 import { useEffect } from 'react'
@@ -14,7 +14,9 @@ vi.mock('aws-amplify/auth', async (importOriginal) => {
   return {
     ...auth,
     fetchAuthSession: vi.fn(auth.fetchAuthSession),
+    fetchUserAttributes: vi.fn(auth.fetchUserAttributes),
     getCurrentUser: vi.fn(auth.getCurrentUser),
+    signIn: vi.fn(auth.signIn),
   }
 })
 
@@ -93,11 +95,25 @@ test('shows the Amplify sign-in form without a sign-up tab', async () => {
   expect(screen.queryByRole('tab', { name: /create account/i })).toBeNull()
 })
 
-test('redirects successful sign-in through the admin index to personas', async () => {
-  const locations = renderAt('/signin', true)
-  await screen.findByLabelText('Email')
+test('waits for the email verification step before redirecting through the admin index', async () => {
+  vi.mocked(auth.signIn).mockImplementationOnce(async () => {
+    vi.mocked(auth.getCurrentUser).mockResolvedValue(user)
+    Hub.dispatch('auth', { event: 'signedIn', data: user })
 
-  act(() => Hub.dispatch('auth', { event: 'signedIn', data: user }))
+    return { isSignedIn: true, nextStep: { signInStep: 'DONE' } }
+  })
+  vi.mocked(auth.fetchUserAttributes).mockResolvedValueOnce({
+    email: 'test@example.com',
+    email_verified: 'false',
+  })
+  const locations = renderAt('/signin', true)
+  fireEvent.change(await screen.findByLabelText('Email'), { target: { value: 'test@example.com' } })
+  fireEvent.change(screen.getByLabelText('Password'), { target: { value: 'example-password' } })
+  fireEvent.click(screen.getByRole('button', { name: 'Sign in' }))
+
+  const skip = await screen.findByRole('button', { name: 'Skip' })
+  expect(locations).toEqual(['/signin'])
+  fireEvent.click(skip)
 
   expect((await screen.findByRole('alert')).textContent).toContain('isn’t a SuperAdmin')
   expect(locations).toEqual(['/signin', '/a', '/a/personas'])
