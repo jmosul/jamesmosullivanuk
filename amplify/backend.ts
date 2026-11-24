@@ -105,8 +105,9 @@ bindSharedAuth({
 // ── SuperAdmins manage persona images ──
 
 // The policy lives in the storage stack so it depends on SharedAuth, not the
-// other way round.
-const { bucket } = backend.storage.resources
+// other way round. Images are addressed by the path saved on the persona, so
+// SuperAdmins don't need to list the bucket either.
+const { bucket, cfnResources } = backend.storage.resources
 new Policy(Stack.of(bucket), 'SuperAdminPersonaImages', {
   roles: [websiteSuperAdminRole],
   statements: [
@@ -114,15 +115,19 @@ new Policy(Stack.of(bucket), 'SuperAdminPersonaImages', {
       actions: ['s3:GetObject', 's3:PutObject', 's3:DeleteObject', 's3:AbortMultipartUpload'],
       resources: [bucket.arnForObjects(`${PERSONA_IMAGES_PREFIX}*`)],
     }),
-    new PolicyStatement({
-      actions: ['s3:ListBucket'],
-      resources: [bucket.bucketArn],
-      conditions: {
-        StringLike: { 's3:prefix': [PERSONA_IMAGES_PREFIX, `${PERSONA_IMAGES_PREFIX}*`] },
-      },
-    }),
   ],
 })
+
+// Amplify cancels uploads older than an hour, leaving their parts behind.
+cfnResources.cfnBucket.lifecycleConfiguration = {
+  rules: [
+    {
+      id: 'AbortIncompleteMultipartUploads',
+      status: 'Enabled',
+      abortIncompleteMultipartUpload: { daysAfterInitiation: 1 },
+    },
+  ],
+}
 
 backend.addOutput({
   custom: {
