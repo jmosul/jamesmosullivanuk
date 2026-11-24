@@ -1,0 +1,159 @@
+/*
+ * Shared component classes. Each rule is written once and themed only
+ * through tokens.css. Where an Amplify UI part plays the same role as one of
+ * ours, it joins the selector list instead of getting its own copy.
+ */
+
+/* ── Layout ── */
+
+.site-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 24px clamp(16px, 5.5vw, 88px);
+}
+
+.wordmark {
+  color: var(--color-ink);
+  font-family: var(--font-label);
+  font-size: var(--label-size);
+  letter-spacing: var(--label-tracking);
+  text-transform: var(--label-case);
+  text-decoration: none;
+}
+
+.wordmark:hover {
+  color: var(--color-ink);
+}
+
+.header-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.page {
+  display: grid;
+  gap: 24px;
+  width: min(100%, 480px);
+  margin: 0 auto;
+  padding: 32px 16px 64px;
+}
+
+.page-title {
+  font-size: clamp(2.5rem, 6vw, 4rem);
+}
+
+.eyebrow {
+  margin: 0;
+  color: var(--color-muted);
+  font-family: var(--font-label);
+  font-size: var(--label-size);
+  font-style: var(--caption-style);
+  letter-spacing: var(--label-tracking);
+  text-transform: var(--label-case);
+}
+
+/* ── Surfaces ── */
+
+.card,
+[data-amplify-authenticator] [data-amplify-router] {
+  background: var(--color-surface);
+  border: var(--card-border);
+  border-top: var(--card-border-top);
+  border-radius: var(--radius);
+  clip-path: var(--shape-card);
+  box-shadow: none;
+}
+
+.card {
+  padding: 24px;
+}
+
+/* Amplify shrinks its form to fit below 30rem; fill the page column instead. */
+[data-amplify-authenticator] [data-amplify-container] {
+  width: 100%;
+}
+
+/* ── Controls ── */
+
+.button,
+.toggle,
+.amplify-button--primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 0 24px;
+  border: 0;
+  border-radius: 0;
+  clip-path: var(--shape-control);
+  font-family: var(--font-label);
+  font-size: var(--label-size);
+  font-weight: 500;
+  letter-spacing: var(--label-tracking);
+  text-transform: var(--label-case);
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color 300ms ease,
+    color 300ms ease;
+}
+
+/* A clip-path would cut the focus outline off. */
+.button:focus-visible,
+.toggle:focus-visible,
+.amplify-button--primary:focus-visible {
+  clip-path: none;
+}
+
+.button,
+.toggle[aria-pressed='true'],
+.amplify-button--primary {
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+}
+
+.button:hover,
+.amplify-button--primary:hover {
+  background: var(--color-accent-hover);
+  color: var(--color-on-accent);
+}
+
+.button--quiet,
+.toggle {
+  background: var(--color-surface-raised);
+  color: var(--color-body);
+}
+
+.button--quiet:hover,
+.toggle[aria-pressed='false']:hover {
+  background: var(--color-accent-soft);
+  color: var(--color-ink);
+}
+
+.toggle-group {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+/* ── Home ── */
+
+.home {
+  display: grid;
+  place-content: center;
+  min-height: calc(100svh - 120px);
+  padding: 32px 16px;
+  text-align: center;
+}
+
+.home-title {
+  font-size: clamp(3rem, 8vw, 6.5rem);
+  line-height: 0.95;
+  text-wrap: balance;
+}

@@ -1,0 +1,87 @@
+/*
+ * Theme tokens. This is the only file where the themes differ: every other
+ * stylesheet uses these properties and never names a theme.
+ *
+ * Sci-fi is the base on :root, so a missing or unknown data-theme still
+ * renders it. Each further theme overrides the same set of properties under
+ * :root[data-theme="<name>"]. To add a theme, add a block here (every
+ * property) and its name to THEMES in src/theme/themes.ts.
+ */
+
+:root {
+  color-scheme: dark;
+
+  /* Colour */
+  --color-bg: #070b14;
+  --color-surface: #0f1c30;
+  --color-surface-raised: #13233a;
+  --color-ink: #eaf4ff;
+  --color-body: #b5c4d6;
+  --color-muted: #8fa3ba;
+  --color-line: #3c5a78;
+  --color-accent: #5ee6ff;
+  --color-accent-hover: #9fefff;
+  --color-accent-soft: rgb(94 230 255 / 0.14);
+  --color-on-accent: #04121a;
+  --color-focus: #5ee6ff;
+  --backdrop:
+    radial-gradient(ellipse 62% 72% at 100% 100%, rgb(94 230 255 / 0.16), transparent 70%),
+    radial-gradient(ellipse 38% 44% at 70% 100%, rgb(183 156 255 / 0.12), transparent 70%);
+
+  /* Type */
+  --font-display: 'Chakra Petch', 'Segoe UI', sans-serif;
+  --font-label: 'IBM Plex Mono', ui-monospace, monospace;
+  --font-body: 'IBM Plex Sans', 'Segoe UI', sans-serif;
+  --display-weight: 600;
+  --display-case: uppercase;
+  --display-tracking: 0.01em;
+  --label-size: 0.875rem;
+  --label-case: uppercase;
+  --label-tracking: 0.1em;
+  --caption-style: normal;
+
+  /* Shape: clip-paths, so corners are cut rather than rounded */
+  --shape-control: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+  --shape-card: polygon(24px 0, 100% 0, 100% calc(100% - 24px), calc(100% - 24px) 100%, 0 100%, 0 24px);
+  --radius: 0;
+  /* A cut corner would sever a full border, so sci-fi cards get an accent bar instead. */
+  --card-border: 0;
+  --card-border-top: 6px solid var(--color-accent);
+}
+
+:root[data-theme='fantasy'] {
+  color-scheme: light;
+
+  --color-bg: #f2eadb;
+  --color-surface: #f7f0e3;
+  --color-surface-raised: #e3d6be;
+  --color-ink: #2b211c;
+  --color-body: #4a3b33;
+  --color-muted: #6e5a4c;
+  --color-line: #c9b693;
+  --color-accent: #7b2431;
+  --color-accent-hover: #5a1822;
+  --color-accent-soft: rgb(123 36 49 / 0.1);
+  --color-on-accent: #f7f0e3;
+  --color-focus: #9c7430;
+  --backdrop:
+    radial-gradient(ellipse 50% 55% at 85% 90%, rgb(201 162 95 / 0.26), transparent 70%),
+    radial-gradient(ellipse 30% 40% at 95% 55%, rgb(127 160 176 / 0.16), transparent 70%);
+
+  --font-display: 'IM Fell English', Georgia, serif;
+  --font-label: 'IM Fell English SC', Georgia, serif;
+  --font-body: 'EB Garamond', Georgia, serif;
+  --display-weight: 400;
+  --display-case: none;
+  --display-tracking: -0.01em;
+  --label-size: 1.0625rem;
+  --label-case: none;
+  --label-tracking: 0.05em;
+  --caption-style: italic;
+
+  --shape-control: polygon(10px 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 10px 100%, 0 50%);
+  --shape-card: none;
+  --radius: 2px;
+  --card-border: 1px solid var(--color-line);
+  --card-border-top: 1px solid var(--color-line);
+}

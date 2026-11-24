@@ -1,0 +1,6 @@
+/*
+ * Amplify UI's stylesheet, loaded with the sign-in page. It sits in a cascade
+ * layer, so the site's unlayered rules (amplify.css, components.css) beat it
+ * whatever the load order or specificity.
+ */
+@import '@aws-amplify/ui-react/styles.css' layer(amplify-ui);
