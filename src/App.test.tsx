@@ -1,7 +1,8 @@
+import { Authenticator } from '@aws-amplify/ui-react'
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react'
 import * as auth from 'aws-amplify/auth'
 import { Hub } from 'aws-amplify/utils'
-import { useEffect } from 'react'
+import { useEffect, useState, type ComponentProps } from 'react'
 import { MemoryRouter, useLocation } from 'react-router'
 import { afterEach, expect, test, vi } from 'vitest'
 import { configureAmplify } from './amplify'
@@ -14,10 +15,14 @@ vi.mock('aws-amplify/auth', async (importOriginal) => {
   return {
     ...auth,
     fetchAuthSession: vi.fn(auth.fetchAuthSession),
-    fetchUserAttributes: vi.fn(auth.fetchUserAttributes),
     getCurrentUser: vi.fn(auth.getCurrentUser),
-    signIn: vi.fn(auth.signIn),
   }
+})
+
+vi.mock('@aws-amplify/ui-react', async (importOriginal) => {
+  const ui = await importOriginal<typeof import('@aws-amplify/ui-react')>()
+
+  return { ...ui, Authenticator: vi.fn(ui.Authenticator) }
 })
 
 vi.mock(import('./home/personas'), () => ({
@@ -96,24 +101,23 @@ test('shows the Amplify sign-in form without a sign-up tab', async () => {
 })
 
 test('waits for the email verification step before redirecting through the admin index', async () => {
-  vi.mocked(auth.signIn).mockImplementationOnce(async () => {
-    vi.mocked(auth.getCurrentUser).mockResolvedValue(user)
-    Hub.dispatch('auth', { event: 'signedIn', data: user })
+  function VerifyEmail({ children }: ComponentProps<typeof Authenticator>) {
+    const [verified, setVerified] = useState(false)
 
-    return { isSignedIn: true, nextStep: { signInStep: 'DONE' } }
-  })
-  vi.mocked(auth.fetchUserAttributes).mockResolvedValueOnce({
-    email: 'test@example.com',
-    email_verified: 'false',
-  })
+    if (verified) {
+      return <>{typeof children === 'function' ? children({ user }) : children}</>
+    }
+
+    return <button onClick={() => setVerified(true)}>Finish verification</button>
+  }
+
+  vi.mocked(Authenticator).mockImplementation(VerifyEmail)
   const locations = renderAt('/signin', true)
-  fireEvent.change(await screen.findByLabelText('Email'), { target: { value: 'test@example.com' } })
-  fireEvent.change(screen.getByLabelText('Password'), { target: { value: 'example-password' } })
-  fireEvent.click(screen.getByRole('button', { name: 'Sign in' }))
+  const finish = await screen.findByRole('button', { name: 'Finish verification' })
 
-  const skip = await screen.findByRole('button', { name: 'Skip' })
+  act(() => Hub.dispatch('auth', { event: 'signedIn', data: user }))
   expect(locations).toEqual(['/signin'])
-  fireEvent.click(skip)
+  fireEvent.click(finish)
 
   expect((await screen.findByRole('alert')).textContent).toContain('isn’t a SuperAdmin')
   expect(locations).toEqual(['/signin', '/a', '/a/personas'])
