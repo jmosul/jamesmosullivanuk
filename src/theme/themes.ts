@@ -25,6 +25,7 @@ export function isTheme(value: unknown): value is Theme {
 export function readStoredTheme(): Theme {
   try {
     const stored = window.localStorage.getItem(THEME_STORAGE_KEY)
+
     return isTheme(stored) ? stored : DEFAULT_THEME
   } catch {
     return DEFAULT_THEME

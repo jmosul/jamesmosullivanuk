@@ -33,6 +33,7 @@ const reference = (key: keyof SharedAuthReferences) =>
       if (!references) {
         throw new Error('bindSharedAuth() must be called in amplify/backend.ts')
       }
+
       return references[key]
     },
   })

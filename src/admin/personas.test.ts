@@ -12,12 +12,14 @@ const existing = (slug: string, sortOrder: number) => ({ slug, sortOrder }) as P
 
 function fakeStore(personas: Persona[]): PersonaStore & { created: Persona[] } {
   const created: Persona[] = []
+
   return {
     created,
     list: async () => personas,
     create: async (record) => {
       const persona = { ...record, id: 'new-id', createdAt: '', updatedAt: '' } as Persona
       created.push(persona)
+
       return persona
     },
   }

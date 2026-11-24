@@ -21,6 +21,7 @@ export function PersonasPage({ store }: { store: PersonaStore }) {
       .list()
       .then((list) => current && setPersonas(bySortOrder(list)))
       .catch((error: unknown) => current && setLoadError(messageOf(error)))
+
     return () => {
       current = false
     }
@@ -60,6 +61,7 @@ export function PersonasPage({ store }: { store: PersonaStore }) {
 
 function PersonaCard({ persona, position }: { persona: Persona; position: number }) {
   const panels = persona.panels.length
+
   return (
     <article className="persona-card" data-theme={persona.theme} aria-label={persona.label}>
       <p className="eyebrow">{String(position).padStart(2, '0')}</p>
@@ -100,6 +102,7 @@ function NewPersonaTile({ store }: { store: PersonaStore }) {
     event.preventDefault()
     setSaving(true)
     setError(null)
+
     try {
       const persona = await createDraftPersona(store, { name, content, theme })
       void navigate(adminPersonaPath(persona.id))

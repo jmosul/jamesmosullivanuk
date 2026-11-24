@@ -16,15 +16,26 @@ function RequireSuperAdmin({ children }: { children: ReactNode }) {
     fetchAuthSession()
       .then((session) => {
         const groups = session.tokens?.idToken?.payload['cognito:groups']
-        if (current) setAccess(Array.isArray(groups) && groups.includes(SUPER_ADMINS) ? 'allowed' : 'denied')
+
+        if (current) {
+          setAccess(Array.isArray(groups) && groups.includes(SUPER_ADMINS) ? 'allowed' : 'denied')
+        }
       })
       .catch(() => current && setAccess('denied'))
+
     return () => {
       current = false
     }
   }, [])
 
-  if (access === 'checking') return <p className="page-note" role="status">Checking access…</p>
+  if (access === 'checking') {
+    return (
+      <p className="page-note" role="status">
+        Checking access…
+      </p>
+    )
+  }
+
   if (access === 'denied') {
     return (
       <p className="card" role="alert">
@@ -32,6 +43,7 @@ function RequireSuperAdmin({ children }: { children: ReactNode }) {
       </p>
     )
   }
+
   return <>{children}</>
 }
 
@@ -45,6 +57,7 @@ export function AdminGate({ configured, children }: { configured: boolean; child
       </p>
     )
   }
+
   return (
     <Authenticator hideSignUp>
       <RequireSuperAdmin>{children}</RequireSuperAdmin>

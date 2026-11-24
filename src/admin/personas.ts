@@ -29,6 +29,7 @@ export function slugify(text: string): string {
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
+
   return slug || 'persona'
 }
 
@@ -36,9 +37,15 @@ export function slugify(text: string): string {
 export function uniqueSlug(name: string, taken: Iterable<string>): string {
   const used = new Set(taken)
   const base = slugify(name)
-  if (!used.has(base)) return base
+
+  if (!used.has(base)) {
+    return base
+  }
+
   for (let n = 2; ; n++) {
-    if (!used.has(`${base}-${n}`)) return `${base}-${n}`
+    if (!used.has(`${base}-${n}`)) {
+      return `${base}-${n}`
+    }
   }
 }
 
@@ -60,6 +67,7 @@ export const bySortOrder = (personas: readonly Persona[]): Persona[] =>
 export async function createDraftPersona(store: PersonaStore, input: NewPersona): Promise<Persona> {
   const existing = await store.list()
   const name = input.name.trim()
+
   return store.create({
     slug: uniqueSlug(
       name,
@@ -80,21 +88,31 @@ export async function createDraftPersona(store: PersonaStore, input: NewPersona)
 /** The live table, called as the signed-in SuperAdmin. */
 export function createPersonaStore(): PersonaStore {
   const { Persona } = generateClient<Schema>({ authMode: 'userPool' }).models
+
   return {
     async list() {
       const personas: Persona[] = []
       let nextToken: string | null | undefined
       do {
         const page = await Persona.list({ nextToken })
-        if (page.errors?.length) throw new Error(page.errors[0].message)
+
+        if (page.errors?.length) {
+          throw new Error(page.errors[0].message)
+        }
+
         personas.push(...page.data)
         nextToken = page.nextToken
       } while (nextToken)
+
       return personas
     },
     async create(record) {
       const { data, errors } = await Persona.create(record)
-      if (errors?.length || !data) throw new Error(errors?.[0]?.message ?? 'The persona was not saved.')
+
+      if (errors?.length || !data) {
+        throw new Error(errors?.[0]?.message ?? 'The persona was not saved.')
+      }
+
       return data
     },
   }

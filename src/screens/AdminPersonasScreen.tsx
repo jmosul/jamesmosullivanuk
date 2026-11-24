@@ -15,5 +15,6 @@ export function AdminPersonasScreen({ configured }: { configured: boolean }) {
 // Only built once signed in: the client needs Amplify's auth to be ready.
 function SignedInPersonas() {
   const store = useMemo(() => createPersonaStore(), [])
+
   return <PersonasPage store={store} />
 }
