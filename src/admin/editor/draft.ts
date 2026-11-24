@@ -74,8 +74,8 @@ export const newPanel = (traits: ThemeTraits, id: string = crypto.randomUUID()):
   accent: traits.panelAccents[0]?.color ?? null,
 })
 
-/** Panels the homepage leaves out in this theme. */
-export const hiddenPanels = (draft: PersonaDraft, traits: ThemeTraits): Panel[] =>
+/** Panels the homepage draws as a placeholder until they have an image. */
+export const placeholderPanels = (draft: PersonaDraft, traits: ThemeTraits): Panel[] =>
   traits.panelNeedsImage ? draft.panels.filter((panel) => !panel.image) : []
 
 /**
@@ -83,7 +83,7 @@ export const hiddenPanels = (draft: PersonaDraft, traits: ThemeTraits): Panel[] 
  * fields. Empty when it's ready. Only the editor enforces this; the API
  * accepts any status.
  */
-export function publishBlockers(draft: PersonaDraft, traits: ThemeTraits): string[] {
+export function publishBlockers(draft: PersonaDraft): string[] {
   const blockers: string[] = []
 
   if (!draft.label.trim()) {
@@ -102,8 +102,8 @@ export function publishBlockers(draft: PersonaDraft, traits: ThemeTraits): strin
     blockers.push('Give every panel a title.')
   }
 
-  if (draft.panels.length === hiddenPanels(draft, traits).length) {
-    blockers.push(traits.panelNeedsImage ? 'Add a panel with an image.' : 'Add a panel.')
+  if (draft.panels.length === 0) {
+    blockers.push('Add a panel.')
   }
 
   return blockers

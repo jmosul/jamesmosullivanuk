@@ -33,6 +33,16 @@
   --color-warn-ink: #ffd07a;
   --color-danger: #4a1d2a;
   --color-on-danger: #ffc2cd;
+  /* Dark plates: link buttons, the stage's arrows */
+  --color-plate: #13233a;
+  --color-on-plate: #eaf4ff;
+  --color-plate-icon: var(--color-accent);
+  /* Icons on accent buttons, e.g. the sign-in key */
+  --color-accent-icon: var(--color-on-accent);
+  /* Behind text laid over the stage */
+  --color-veil: rgb(10 18 32 / 0.82);
+  /* Fine ornament lines, e.g. the hero divider */
+  --color-ornament: #3c5a78;
   --backdrop:
     radial-gradient(ellipse 62% 72% at 100% 100%, rgb(94 230 255 / 0.16), transparent 70%),
     radial-gradient(ellipse 38% 44% at 70% 100%, rgb(183 156 255 / 0.12), transparent 70%);
@@ -48,6 +58,16 @@
   --label-case: uppercase;
   --label-tracking: 0.1em;
   --caption-style: normal;
+  --caption-weight: 500;
+  --wordmark-size: 0.9375rem;
+  /* Homepage hero */
+  --hero-title-size: clamp(2.5rem, 5.4vw, 5.125rem);
+  --hero-byline-size: clamp(0.8125rem, 1.2vw, 1.125rem);
+  --hero-byline-tracking: 0.12em;
+  --hero-lede-size: clamp(0.96875rem, 1.3vw, 1.25rem);
+  --hero-lede-line: 1.6;
+  --hint-font: var(--font-label);
+  --hint-tracking: 0.04em;
 
   /* Shape: clip-paths, so corners are cut rather than rounded */
   --shape-control: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
@@ -58,6 +78,13 @@
   /* A cut corner would sever a full border, so sci-fi cards get an accent bar instead. */
   --card-border: 0;
   --card-border-top: 6px solid var(--color-accent);
+  /* Round buttons on the stage, e.g. previous and next */
+  --shape-nav: var(--shape-control);
+  --radius-nav: 0;
+  /* How homepage panels mix with the backdrop behind them */
+  --panel-blend: normal;
+  /* Darkens the stage's edges */
+  --vignette: inset 0 0 200px rgb(0 0 0 / 0.55);
 }
 
 :root[data-theme='fantasy'],
@@ -80,6 +107,12 @@
   --color-warn-ink: #4f3306;
   --color-danger: #7b2431;
   --color-on-danger: #f7f0e3;
+  --color-plate: #2b211c;
+  --color-on-plate: #f7f0e3;
+  --color-plate-icon: #d9b46a;
+  --color-accent-icon: #d9b46a;
+  --color-veil: rgb(242 234 219 / 0.86);
+  --color-ornament: #9c7430;
   --backdrop:
     radial-gradient(ellipse 50% 55% at 85% 90%, rgb(201 162 95 / 0.26), transparent 70%),
     radial-gradient(ellipse 30% 40% at 95% 55%, rgb(127 160 176 / 0.16), transparent 70%);
@@ -94,6 +127,15 @@
   --label-case: none;
   --label-tracking: 0.05em;
   --caption-style: italic;
+  --caption-weight: 400;
+  --wordmark-size: 1.1875rem;
+  --hero-title-size: clamp(2.875rem, 6.4vw, 6rem);
+  --hero-byline-size: clamp(1.0625rem, 1.5vw, 1.375rem);
+  --hero-byline-tracking: 0.08em;
+  --hero-lede-size: clamp(1.0625rem, 1.45vw, 1.375rem);
+  --hero-lede-line: 1.5;
+  --hint-font: var(--font-display);
+  --hint-tracking: 0;
 
   --shape-control: polygon(10px 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 10px 100%, 0 50%);
   --shape-card: none;
@@ -101,4 +143,9 @@
   --radius: 2px;
   --card-border: 1px solid var(--color-line);
   --card-border-top: 1px solid var(--color-line);
+  --shape-nav: none;
+  --radius-nav: 50%;
+  /* Watercolour portraits sink into the paper */
+  --panel-blend: multiply;
+  --vignette: inset 0 0 180px rgb(110 78 38 / 0.22);
 }

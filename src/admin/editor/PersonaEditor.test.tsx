@@ -79,13 +79,13 @@ test('can’t be published until it has a panel', async () => {
   expect(publishedOption().disabled).toBe(false)
 })
 
-test('fantasy panels need an image before it can be published', async () => {
+test('fantasy panels without an image are flagged but can be published', async () => {
   renderEditor(fakeStore([persona({ theme: 'fantasy' })]))
   fireEvent.click(await screen.findByRole('button', { name: 'Add panel' }))
 
   expect(screen.getByText('Needs image')).toBeTruthy()
-  expect(screen.getByText('Add a panel with an image.')).toBeTruthy()
-  expect(publishedOption().disabled).toBe(true)
+  expect(screen.getByText(/shows a placeholder on the homepage/)).toBeTruthy()
+  expect(publishedOption().disabled).toBe(false)
 })
 
 test('saves the edited persona', async () => {

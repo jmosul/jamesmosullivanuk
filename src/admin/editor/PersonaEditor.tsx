@@ -83,7 +83,7 @@ function EditorForm({ store, persona, takenSlugs }: Loaded & { store: PersonaSto
   useThemeOverride(draft.theme)
 
   const traits = THEME_TRAITS[draft.theme]
-  const blockers = publishBlockers(draft, traits)
+  const blockers = publishBlockers(draft)
   const problems = saveProblems(draft, takenSlugs)
   const publishedButNotReady = draft.status === 'published' && blockers.length > 0
   const dirty = JSON.stringify(draft) !== JSON.stringify(saved)

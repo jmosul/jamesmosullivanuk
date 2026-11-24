@@ -1,6 +1,6 @@
 import { expect, test } from 'vitest'
 import { THEME_TRAITS } from '../../theme'
-import { draftReducer, newPanel, publishBlockers, saveProblems, type PersonaDraft } from './draft'
+import { draftReducer, newPanel, placeholderPanels, publishBlockers, saveProblems, type PersonaDraft } from './draft'
 
 const draft = (fields: Partial<PersonaDraft> = {}): PersonaDraft => ({
   slug: 'engineer',
@@ -44,13 +44,12 @@ test('link actions add, change and remove', () => {
 })
 
 test('a complete sci-fi persona is ready to publish', () => {
-  expect(publishBlockers(draft(), THEME_TRAITS.scifi)).toEqual([])
+  expect(publishBlockers(draft())).toEqual([])
 })
 
 test('lists what a persona is missing before it can be published', () => {
   const blockers = publishBlockers(
     draft({ label: ' ', content: '', links: [{ label: '', href: 'https://x.test', external: true }], panels: [] }),
-    THEME_TRAITS.scifi,
   )
 
   expect(blockers).toEqual([
@@ -61,12 +60,13 @@ test('lists what a persona is missing before it can be published', () => {
   ])
 })
 
-test('fantasy needs at least one panel with an image', () => {
+test('fantasy panels without an image are placeholders, not blockers', () => {
   const traits = THEME_TRAITS.fantasy
   const image = { path: 'persona-images/a.webp', alt: 'A', width: 2, height: 3 }
+  const withPanels = draft({ theme: 'fantasy', panels: [panel('a'), panel('b', { image })] })
 
-  expect(publishBlockers(draft({ theme: 'fantasy' }), traits)).toEqual(['Add a panel with an image.'])
-  expect(publishBlockers(draft({ theme: 'fantasy', panels: [panel('a'), panel('b', { image })] }), traits)).toEqual([])
+  expect(publishBlockers(withPanels)).toEqual([])
+  expect(placeholderPanels(withPanels, traits).map((p) => p.id)).toEqual(['a'])
 })
 
 test('save checks the slug and link addresses', () => {

@@ -1,0 +1,472 @@
+/*
+ * The homepage. Written once against tokens; the per-theme drawings
+ * (backdrops, panels, ornaments) are components, and their colours and
+ * shapes still come from here.
+ *
+ * --progress is the stage's position, set on .home as the visitor scrolls;
+ * backdrop motion is derived from it in CSS so the backdrops never re-render.
+ */
+
+.home {
+  position: relative;
+  height: 100svh;
+  min-height: 560px;
+  overflow: hidden;
+  touch-action: pinch-zoom;
+  overscroll-behavior: none;
+}
+
+/* ── Persona layers: one per persona, cross-faded ── */
+
+.persona-layer {
+  position: absolute;
+  inset: 0;
+  background: var(--color-bg);
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 600ms ease,
+    visibility 0s linear 600ms;
+}
+
+.persona-layer[data-active='true'] {
+  opacity: 1;
+  visibility: visible;
+  transition-delay: 0s;
+}
+
+.vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  box-shadow: var(--vignette);
+}
+
+/* Sci-fi backdrop */
+
+.backdrop-glow {
+  position: absolute;
+  inset: 0;
+  background: var(--backdrop);
+}
+
+/* A tile wider than the screen, slid back by a whole tile as it loops. */
+.starfield {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: calc(100% + var(--tile));
+  height: 100%;
+  transform: translateX(calc(-1 * mod(var(--progress) * var(--speed), var(--tile))));
+}
+
+.planet {
+  position: absolute;
+  right: -78vh;
+  bottom: -112vh;
+  width: 150vh;
+  height: 150vh;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--color-surface) 70%, var(--color-bg));
+  box-shadow:
+    0 0 0 2px color-mix(in srgb, var(--color-accent) 38%, transparent),
+    0 0 90px 14px color-mix(in srgb, var(--color-accent) 22%, transparent);
+  translate: calc(sin(var(--progress) * 0.35rad) * 18px) calc(cos(var(--progress) * 0.35rad) * 8px);
+}
+
+/* Fantasy backdrop */
+
+.wash,
+.grain {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.wash--a {
+  translate: calc(sin(var(--progress) * 0.55rad) * 26px) calc(cos(var(--progress) * 0.4rad) * 14px);
+}
+
+.wash--b {
+  translate: calc(sin(var(--progress) * 0.55rad + 1.3rad) * -46px) calc(cos(var(--progress) * 0.4rad + 0.7rad) * 22px);
+}
+
+.grain {
+  mix-blend-mode: multiply;
+}
+
+/* ── Panels on stage ── */
+
+.stage {
+  position: absolute;
+  inset: 0;
+  isolation: isolate;
+}
+
+.stage-panel {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  transform-origin: 0 100%;
+  mix-blend-mode: var(--panel-blend);
+  pointer-events: none;
+  user-select: none;
+  will-change: transform, opacity;
+}
+
+.stage-panel[data-on-stage='false'] {
+  opacity: 0;
+  visibility: hidden;
+}
+
+/* Sci-fi tile. --panel-accent is set inline from the panel's own colour. */
+.tile {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  padding: 24px 28px 30px;
+  border-top: 8px solid;
+  background: var(--color-surface);
+  color: var(--panel-accent, var(--color-accent));
+  clip-path: var(--shape-card);
+}
+
+.tile-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-family: var(--font-label);
+  font-size: 0.875rem;
+  letter-spacing: 0.08em;
+  text-transform: var(--label-case);
+}
+
+.tile-meta span:last-child {
+  text-align: right;
+}
+
+.tile-symbol {
+  margin-top: 44px;
+  font-family: var(--font-display);
+  font-size: 8.25rem;
+  font-weight: var(--display-weight);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.tile-logo {
+  display: block;
+  width: 150px;
+  height: 140px;
+  margin-top: 36px;
+  object-fit: contain;
+  object-position: 0 50%;
+}
+
+.tile-title {
+  margin-top: 16px;
+  color: var(--color-ink);
+  font-family: var(--font-display);
+  font-size: 2.125rem;
+  font-weight: 500;
+  line-height: 1.1;
+}
+
+.tile-rule {
+  height: 10px;
+  margin-top: auto;
+  background: repeating-linear-gradient(90deg, currentColor 0 18px, transparent 18px 26px);
+  opacity: 0.45;
+}
+
+/* Fantasy portrait, feathered into the paper */
+.portrait {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 100%;
+  mask-image: radial-gradient(ellipse 72% 78% at 50% 54%, #000 62%, transparent 100%);
+}
+
+/* Until a panel has an image: a faint figure in a wash of ink, fading out at the foot. */
+.portrait--placeholder {
+  background: radial-gradient(
+    ellipse 50% 40% at 50% 58%,
+    color-mix(in srgb, var(--color-ornament) 22%, transparent),
+    transparent 75%
+  );
+  color: var(--color-ornament);
+  mask-image: linear-gradient(to bottom, #000 45%, transparent 92%);
+}
+
+.portrait--placeholder svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-dasharray: 5 4;
+  opacity: 0.55;
+}
+
+/* ── Hero copy ── */
+
+.hero {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 6;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: min(580px, 46vw);
+  padding: max(112px, calc(50svh - 230px)) 0 0 clamp(20px, 5.5vw, 88px);
+}
+
+.hero .toggle-group {
+  margin-bottom: 24px;
+}
+
+.hero-title {
+  font-size: var(--hero-title-size);
+  line-height: 0.98;
+}
+
+.hero-title span {
+  display: block;
+}
+
+.hero-byline {
+  margin: 16px 0 0;
+  color: var(--color-accent);
+  font-family: var(--font-label);
+  font-size: var(--hero-byline-size);
+  font-weight: 500;
+  letter-spacing: var(--hero-byline-tracking);
+  text-transform: var(--label-case);
+}
+
+/* The theme picks the drawing (DIVIDERS); colours come from here. */
+.divider {
+  display: block;
+  width: 200px;
+  height: 13px;
+  margin: 26px 0 22px;
+}
+
+.divider-accent {
+  fill: var(--color-accent);
+}
+
+.divider-line {
+  fill: var(--color-ornament);
+}
+
+.divider-bead {
+  fill: var(--color-bg);
+}
+
+.hero-lede {
+  max-width: 30em;
+  margin: 0;
+  color: var(--color-body);
+  font-size: var(--hero-lede-size);
+  line-height: var(--hero-lede-line);
+}
+
+.hero-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 28px;
+}
+
+/* ── Caption and stage controls ── */
+
+.stage-caption {
+  position: absolute;
+  bottom: 40px;
+  left: clamp(20px, 5.5vw, 88px);
+  z-index: 8;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-nav);
+  background: var(--color-plate);
+  color: var(--color-plate-icon);
+  clip-path: var(--shape-nav);
+  cursor: pointer;
+}
+
+.nav-button:hover {
+  filter: brightness(1.15);
+}
+
+.nav-button:focus-visible {
+  clip-path: none;
+}
+
+.caption-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-left: 10px;
+  padding: 8px 18px 10px;
+  background: var(--color-veil);
+}
+
+.caption-label {
+  color: var(--color-muted);
+  font-family: var(--font-label);
+  font-size: 0.8125rem;
+  letter-spacing: 0.14em;
+  text-transform: var(--label-case);
+}
+
+.caption-swipe {
+  display: none;
+}
+
+.caption-name {
+  color: var(--color-ink);
+  font-family: var(--font-display);
+  font-size: 1.6875rem;
+  font-style: var(--caption-style);
+  font-weight: var(--caption-weight);
+  line-height: 1.1;
+}
+
+.caption-subtitle {
+  color: var(--color-muted);
+  font-size: 1rem;
+}
+
+.caption-hint {
+  margin-left: 10px;
+  color: var(--color-muted);
+  font-family: var(--hint-font);
+  font-size: 0.9375rem;
+  font-style: var(--caption-style);
+  letter-spacing: var(--hint-tracking);
+}
+
+/* ── Phones and portrait windows (matches viewportOf in src/home/stage.ts) ── */
+
+@media (max-width: 819px), (max-aspect-ratio: 21/20) {
+  .site-header--overlay {
+    padding: 16px 20px;
+  }
+
+  .hero {
+    right: 0;
+    width: auto;
+    padding: 84px 20px 0;
+  }
+
+  .hero .toggle-group {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 4px;
+    align-self: stretch;
+    margin-bottom: 0;
+    padding: 4px;
+    background: var(--color-surface-raised);
+    clip-path: var(--shape-control);
+  }
+
+  .hero .toggle {
+    padding: 0 8px;
+    font-size: calc(var(--label-size) * 0.88);
+    letter-spacing: calc(var(--label-tracking) * 0.7);
+  }
+
+  .hero-title {
+    margin-top: 26px;
+  }
+
+  .hero-byline {
+    margin-top: 10px;
+  }
+
+  .divider {
+    width: 150px;
+    height: 10px;
+    margin: 18px 0 14px;
+  }
+
+  .hero-links {
+    margin-top: 16px;
+  }
+
+  .hero-links .button {
+    padding: 0 18px;
+  }
+
+  .stage-caption {
+    right: 12px;
+    bottom: 14px;
+    left: 12px;
+    flex-wrap: nowrap;
+    gap: 10px;
+    padding: 8px;
+    background: var(--color-veil);
+  }
+
+  .nav-button {
+    width: 44px;
+    height: 44px;
+  }
+
+  .nav-button--prev {
+    order: 0;
+  }
+
+  .caption-text {
+    order: 1;
+    flex: 1;
+    align-items: center;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    text-align: center;
+  }
+
+  .nav-button--next {
+    order: 2;
+  }
+
+  .caption-hint {
+    display: none;
+  }
+
+  .caption-swipe {
+    display: inline;
+  }
+
+  .caption-name {
+    font-size: 1.375rem;
+  }
+}
+
+@media (max-width: 819px) and (max-height: 700px), (max-aspect-ratio: 21/20) and (max-height: 700px) {
+  .hero-lede {
+    display: none;
+  }
+}
