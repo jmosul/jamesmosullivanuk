@@ -6,6 +6,16 @@ type AuthStatus = 'checking' | 'signedIn' | 'signedOut'
 
 const AuthStatusContext = createContext<AuthStatus>('signedOut')
 
+// Amplify clears its stored tokens for these Cognito refresh errors.
+const TERMINAL_REFRESH_ERRORS = [
+  'NotAuthorizedException',
+  'TokenRevokedException',
+  'UserNotFoundException',
+  'PasswordResetRequiredException',
+  'UserNotConfirmedException',
+  'RefreshTokenReuseException',
+]
+
 export function AuthProvider({ configured, children }: { configured: boolean; children: ReactNode }) {
   const [status, setStatus] = useState<AuthStatus>(configured ? 'checking' : 'signedOut')
 
@@ -16,9 +26,13 @@ export function AuthProvider({ configured, children }: { configured: boolean; ch
 
     let checking = true
     const unsubscribe = Hub.listen('auth', ({ payload }) => {
-      if (payload.event === 'signedIn' || payload.event === 'signedOut') {
+      const { event } = payload
+      const sessionInvalidated = event === 'tokenRefresh_failure' &&
+        TERMINAL_REFRESH_ERRORS.some((name) => payload.data.error?.name.startsWith(name))
+
+      if (event === 'signedIn' || event === 'signedOut' || sessionInvalidated) {
         checking = false
-        setStatus(payload.event)
+        setStatus(event === 'signedIn' ? 'signedIn' : 'signedOut')
       }
     })
 

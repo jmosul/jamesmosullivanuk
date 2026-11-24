@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen } from '@testing-library/react'
+import { act, cleanup, fireEvent, render, screen } from '@testing-library/react'
 import * as auth from 'aws-amplify/auth'
 import { Hub } from 'aws-amplify/utils'
 import { useEffect } from 'react'
@@ -134,6 +134,27 @@ test('links an existing session to admin and returns home after sign-out', async
 
   expect(await screen.findByRole('link', { name: 'Sign in' })).toBeTruthy()
   expect(locations).toEqual(['/', '/a', '/a/personas', '/'])
+})
+
+test('returns home when token refresh invalidates the session', async () => {
+  vi.mocked(auth.getCurrentUser).mockResolvedValueOnce(user)
+  const locations = renderAt('/a/future', true)
+  await screen.findByRole('button', { name: 'Sign out' })
+
+  act(() => Hub.dispatch('auth', {
+    event: 'tokenRefresh_failure',
+    data: { error: new auth.AuthError({ name: 'TooManyRequestsException', message: 'Rate limited' }) },
+  }))
+  expect(locations).toEqual(['/a/future'])
+
+  act(() => Hub.dispatch('auth', {
+    event: 'tokenRefresh_failure',
+    data: { error: new auth.AuthError({ name: 'NotAuthorizedException', message: 'Refresh token expired' }) },
+  }))
+  fireEvent.click(await screen.findByRole('link', { name: 'Sign in' }))
+
+  expect(await screen.findByLabelText('Email')).toBeTruthy()
+  expect(locations).toEqual(['/a/future', '/', '/signin'])
 })
 
 test.each(['/a', '/a/personas', '/a/personas/p1', '/a/future/page'])(
