@@ -1,5 +1,5 @@
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
-import { MemoryRouter, Route, Routes } from 'react-router'
+import { MemoryRouter, Route, Routes, useParams } from 'react-router'
 import { afterEach, expect, test } from 'vitest'
 import { PersonasPage } from './PersonasPage'
 import type { Persona, PersonaStore } from './personas'
@@ -15,12 +15,14 @@ const store = (): PersonaStore => ({
   remove: async () => {},
 })
 
+const EditorStub = () => <p>Editor for {useParams().personaId}</p>
+
 const renderPage = () =>
   render(
     <MemoryRouter initialEntries={['/a/personas']}>
       <Routes>
         <Route path="/a/personas" element={<PersonasPage store={store()} />} />
-        <Route path="/a/personas/:personaId" element={<p>Editor for new-id</p>} />
+        <Route path="/a/personas/:personaId" element={<EditorStub />} />
       </Routes>
     </MemoryRouter>,
   )
@@ -46,4 +48,11 @@ test('creating a draft goes to the new persona’s page', async () => {
   fireEvent.click(screen.getByRole('button', { name: 'Create draft' }))
 
   await waitFor(() => expect(screen.getByText('Editor for new-id')).toBeTruthy())
+})
+
+test('each card links to that persona’s editor', async () => {
+  renderPage()
+  fireEvent.click(await screen.findByRole('link', { name: 'Software Engineer' }))
+
+  await waitFor(() => expect(screen.getByText('Editor for p1')).toBeTruthy())
 })

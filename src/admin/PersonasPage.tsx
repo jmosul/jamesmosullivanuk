@@ -1,5 +1,5 @@
 import { useEffect, useId, useState, type FormEvent } from 'react'
-import { useNavigate } from 'react-router'
+import { Link, useNavigate } from 'react-router'
 import { adminPersonaPath } from '../routes'
 import { messageOf } from './messageOf'
 import { isTheme, THEME_LABELS, THEMES, type Theme } from '../theme'
@@ -60,7 +60,12 @@ function PersonaCard({ persona, position }: { persona: Persona; position: number
   return (
     <article className="persona-card" data-theme={persona.theme} aria-label={persona.label}>
       <p className="eyebrow">{String(position).padStart(2, '0')}</p>
-      <h2 className="persona-card-title">{persona.label}</h2>
+      <h2 className="persona-card-title">
+        {/* Stretched over the whole card in CSS, so the card is one click target. */}
+        <Link className="persona-card-link" to={adminPersonaPath(persona.id)}>
+          {persona.label}
+        </Link>
+      </h2>
       {persona.title && <p className="persona-card-byline">{persona.title}</p>}
       <p className="persona-card-content">{persona.content}</p>
       <p className="eyebrow persona-card-meta">
