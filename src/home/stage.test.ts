@@ -8,6 +8,7 @@ import {
   placeAt,
   randomSequence,
   SEQUENCE_LENGTH,
+  stageSlots,
   START_PROGRESS,
   viewportOf,
 } from './stage'
@@ -53,7 +54,7 @@ describe('sequences', () => {
 
 describe('onStage', () => {
   test('puts the panel at progress at the front and the next four behind it', () => {
-    const stage = onStage(orderedSequence(6), START_PROGRESS)
+    const stage = onStage(orderedSequence(6), START_PROGRESS, 4)
 
     expect([...stage.entries()]).toEqual([
       [0, 0],
@@ -64,10 +65,44 @@ describe('onStage', () => {
   })
 
   test('between steps, the front panel is on its way out', () => {
-    const stage = onStage(orderedSequence(6), START_PROGRESS + 0.25)
+    const stage = onStage(orderedSequence(6), START_PROGRESS + 0.25, 4)
 
     expect(stage.get(0)).toBeCloseTo(-0.25)
     expect(stage.get(4)).toBeCloseTo(3.75)
+  })
+})
+
+describe('stageSlots', () => {
+  const slots = THEME_TRAITS.fantasy.panelSlots.wide
+
+  test('five or more panels use every slot', () => {
+    expect(stageSlots(slots, 5)).toBe(slots)
+    expect(stageSlots(slots, 9)).toBe(slots)
+  })
+
+  test('fewer panels drop the places behind they cannot fill', () => {
+    expect(stageSlots(slots, 2)).toEqual([slots[0], slots[1], slots[5]])
+    expect(stageSlots(slots, 4)).toEqual([slots[0], slots[1], slots[2], slots[3], slots[5]])
+  })
+
+  test('a lone panel stays at the front', () => {
+    expect(stageSlots(slots, 1)).toEqual([slots[1], slots[1], slots[1]])
+  })
+
+  test('two panels each stand in one place, the front at full size', () => {
+    const two = stageSlots(slots, 2)
+    const stage = onStage(orderedSequence(2), START_PROGRESS, two.length - 2)
+
+    expect([...stage.entries()]).toEqual([[0, 0]])
+    expect(placeAt(stage.get(0)!, two)).toMatchObject(slots[1])
+  })
+
+  test('between steps, two panels swap without either appearing twice', () => {
+    const two = stageSlots(slots, 2)
+    const stage = onStage(orderedSequence(2), START_PROGRESS + 0.5, two.length - 2)
+
+    expect(stage.get(0)).toBeCloseTo(-0.5)
+    expect(stage.get(1)).toBeCloseTo(0.5)
   })
 })
 

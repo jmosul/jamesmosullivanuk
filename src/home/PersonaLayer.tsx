@@ -3,7 +3,7 @@ import { THEME_TRAITS } from '../theme'
 import { BACKDROPS } from './backdrops'
 import { imageSizes, PANEL_DRAWINGS } from './drawings'
 import type { HomePersona } from './personas'
-import { largestVisibleScale, onStage, placeAt, slotsFor, type Viewport } from './stage'
+import { largestVisibleScale, onStage, placeAt, slotsFor, stageSlots, type Viewport } from './stage'
 
 interface PersonaLayerProps {
   persona: HomePersona
@@ -30,9 +30,9 @@ export const PersonaLayer = memo(function PersonaLayer({
   const Backdrop = BACKDROPS[persona.theme]
   const drawing = PANEL_DRAWINGS[persona.theme]
   const { Drawing, box } = drawing
-  const slots = slotsFor(THEME_TRAITS[persona.theme].panelSlots, viewport)
+  const slots = stageSlots(slotsFor(THEME_TRAITS[persona.theme].panelSlots, viewport), persona.panels.length)
   const largestScale = largestVisibleScale(slots)
-  const visible = onStage(sequence, progress)
+  const visible = onStage(sequence, progress, slots.length - 2)
 
   return (
     <div className="persona-layer" data-theme={persona.theme} data-active={active} aria-hidden="true">

@@ -54,9 +54,10 @@ export function randomSequence(count: number, random: () => number = Math.random
 
 /**
  * Each visible panel's place relative to the front: 0 is the front, 1 the
- * one behind, -0.5 halfway out. Only (-1, 4) is on stage.
+ * one behind, -0.5 halfway out. Only (-1, depth) is on stage, where depth is
+ * the arriving slot's place: `slots.length - 2` of the slots from `stageSlots`.
  */
-export function onStage(sequence: readonly number[], progress: number): Map<number, number> {
+export function onStage(sequence: readonly number[], progress: number, depth: number): Map<number, number> {
   const visible = new Map<number, number>()
 
   if (sequence.length === 0) {
@@ -65,10 +66,10 @@ export function onStage(sequence: readonly number[], progress: number): Map<numb
 
   const base = Math.floor(progress)
 
-  for (let step = base; step <= base + 4; step++) {
+  for (let step = base; step <= base + depth; step++) {
     const relative = step - progress
 
-    if (relative > -1 && relative < 4 && step < sequence.length) {
+    if (relative > -1 && relative < depth && step < sequence.length) {
       visible.set(sequence[step], relative)
     }
   }
@@ -115,6 +116,26 @@ export function viewportOf(width: number, height: number): Viewport {
 }
 
 export const slotsFor = (slots: PanelSlots, viewport: Viewport) => (viewport.narrow ? slots.narrow : slots.wide)
+
+/**
+ * The slots a persona with `count` panels uses. A panel can only be in one
+ * place at once, so with fewer panels than the stage has places, the places
+ * behind the front are cut down to what the panels can fill, keeping the
+ * leaving and arriving slots either end. A lone panel stays at the front.
+ */
+export function stageSlots(slots: readonly PanelSlot[], count: number): readonly PanelSlot[] {
+  const behind = slots.length - 3
+
+  if (count <= 1) {
+    return [slots[1], slots[1], slots[1]]
+  }
+
+  if (count - 2 >= behind) {
+    return slots
+  }
+
+  return [...slots.slice(0, count), slots[slots.length - 1]]
+}
 
 /** The largest scale a panel is drawn at while it can be seen. */
 export const largestVisibleScale = (slots: readonly PanelSlot[]) =>
