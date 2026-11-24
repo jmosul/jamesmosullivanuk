@@ -29,6 +29,10 @@
   --color-accent-soft: rgb(94 230 255 / 0.14);
   --color-on-accent: #04121a;
   --color-focus: #5ee6ff;
+  --color-warn-bg: #3b2a0c;
+  --color-warn-ink: #ffd07a;
+  --color-danger: #4a1d2a;
+  --color-on-danger: #ffc2cd;
   --backdrop:
     radial-gradient(ellipse 62% 72% at 100% 100%, rgb(94 230 255 / 0.16), transparent 70%),
     radial-gradient(ellipse 38% 44% at 70% 100%, rgb(183 156 255 / 0.12), transparent 70%);
@@ -48,6 +52,8 @@
   /* Shape: clip-paths, so corners are cut rather than rounded */
   --shape-control: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
   --shape-card: polygon(24px 0, 100% 0, 100% calc(100% - 24px), calc(100% - 24px) 100%, 0 100%, 0 24px);
+  /* Panel thumbnails: a chamfered tile, as the homepage draws sci-fi panels */
+  --shape-thumb: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
   --radius: 0;
   /* A cut corner would sever a full border, so sci-fi cards get an accent bar instead. */
   --card-border: 0;
@@ -70,6 +76,10 @@
   --color-accent-soft: rgb(123 36 49 / 0.1);
   --color-on-accent: #f7f0e3;
   --color-focus: #9c7430;
+  --color-warn-bg: #f1ddb3;
+  --color-warn-ink: #4f3306;
+  --color-danger: #7b2431;
+  --color-on-danger: #f7f0e3;
   --backdrop:
     radial-gradient(ellipse 50% 55% at 85% 90%, rgb(201 162 95 / 0.26), transparent 70%),
     radial-gradient(ellipse 30% 40% at 95% 55%, rgb(127 160 176 / 0.16), transparent 70%);
@@ -87,6 +97,7 @@
 
   --shape-control: polygon(10px 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 10px 100%, 0 50%);
   --shape-card: none;
+  --shape-thumb: none;
   --radius: 2px;
   --card-border: 1px solid var(--color-line);
   --card-border-top: 1px solid var(--color-line);

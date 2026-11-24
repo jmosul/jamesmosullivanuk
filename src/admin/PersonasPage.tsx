@@ -1,14 +1,9 @@
 import { useEffect, useId, useState, type FormEvent } from 'react'
 import { useNavigate } from 'react-router'
 import { adminPersonaPath } from '../routes'
+import { messageOf } from './messageOf'
 import { isTheme, THEME_LABELS, THEMES, type Theme } from '../theme'
-import { bySortOrder, createDraftPersona, type Persona, type PersonaStore } from './personas'
-
-const STATUS_LABELS: Record<Persona['status'], string> = {
-  draft: 'Draft',
-  published: 'Published',
-  archived: 'Archived',
-}
+import { bySortOrder, createDraftPersona, PERSONA_STATUS_LABELS, type Persona, type PersonaStore } from './personas'
 
 /** The persona list, with a tile that opens into a form for a new draft. */
 export function PersonasPage({ store }: { store: PersonaStore }) {
@@ -69,7 +64,7 @@ function PersonaCard({ persona, position }: { persona: Persona; position: number
       {persona.title && <p className="persona-card-byline">{persona.title}</p>}
       <p className="persona-card-content">{persona.content}</p>
       <p className="eyebrow persona-card-meta">
-        {STATUS_LABELS[persona.status]} · {THEME_LABELS[persona.theme]} · {panels}{' '}
+        {PERSONA_STATUS_LABELS[persona.status]} · {THEME_LABELS[persona.theme]} · {panels}{' '}
         {panels === 1 ? 'panel' : 'panels'}
       </p>
     </article>
@@ -162,5 +157,3 @@ function NewPersonaTile({ store }: { store: PersonaStore }) {
     </form>
   )
 }
-
-const messageOf = (error: unknown) => (error instanceof Error ? error.message : 'Something went wrong.')

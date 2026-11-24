@@ -11,6 +11,8 @@ const persona = { id: 'p1', slug: 'engineer', status: 'published', sortOrder: 0,
 const store = (): PersonaStore => ({
   list: async () => [persona],
   create: async (record) => ({ ...record, id: 'new-id' }) as Persona,
+  update: async (id, record) => ({ ...record, id }) as Persona,
+  remove: async () => {},
 })
 
 const renderPage = () =>
