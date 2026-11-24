@@ -10,10 +10,9 @@ import {
 import { FederatedPrincipal, Policy, PolicyStatement, Role } from 'aws-cdk-lib/aws-iam'
 import { auth, bindSharedAuth, SUPER_ADMINS_GROUP } from './auth/resource'
 import { data } from './data/resource'
-import { listPublishedPersonas } from './functions/list-published-personas/resource'
 import { PERSONA_IMAGES_PREFIX, storage } from './storage/resource'
 
-const backend = defineBackend({ auth, data, storage, listPublishedPersonas })
+const backend = defineBackend({ auth, data, storage })
 const authStack = backend.createStack('SharedAuth')
 
 // ── Shared directory: one list of users for every app ──
@@ -101,29 +100,6 @@ bindSharedAuth({
   identityPoolId: websiteIdentityPool.ref,
   authRoleArn: websiteAuthRole.roleArn,
   unauthRoleArn: websiteGuestRole.roleArn,
-})
-
-// ── Public read of published personas ──
-
-const personaTable = backend.data.resources.tables['Persona']
-const publicReader = backend.listPublishedPersonas.resources.lambda
-personaTable.grantReadData(publicReader)
-backend.listPublishedPersonas.addEnvironment('PERSONA_TABLE_NAME', personaTable.tableName)
-
-// Amplify grants the guest role the query itself, but grants nested types only
-// when a model happens to use them, and never PublicPersona. Guests need every
-// type in the response. Signed-in users call with authMode: 'userPool'.
-const { graphqlApi } = backend.data.resources
-new Policy(Stack.of(graphqlApi), 'GuestPublicPersonaTypes', {
-  roles: [backend.auth.resources.unauthenticatedUserIamRole],
-  statements: [
-    new PolicyStatement({
-      actions: ['appsync:GraphQL'],
-      resources: ['PublicPersona', 'PersonaLink', 'Panel', 'PanelImage'].map(
-        (type) => `${graphqlApi.arn}/types/${type}/*`,
-      ),
-    }),
-  ],
 })
 
 // ── SuperAdmins manage persona images ──

@@ -16,24 +16,23 @@ Run `npm run lint` for Oxlint, `npm test` for Vitest, and `npm run build` for Ty
 | --- | --- |
 | `amplify/backend.ts` | The shared user pool and `SuperAdmins` group, plus the website's app client, identity pool and IAM roles |
 | `amplify/auth/resource.ts` | `referenceAuth`, which registers the shared pool and the website's identity pool with Amplify |
-| `amplify/data/resource.ts` | The `Persona` model and the public `listPublishedPersonas` query |
-| `amplify/functions/list-published-personas/` | The Lambda behind `listPublishedPersonas` |
+| `amplify/data/resource.ts` | The `Persona` model |
 | `amplify/storage/resource.ts` | The `websiteMedia` bucket for persona images |
 
 ### Website content and access
 
 A `Persona` holds its links and panels in display order, and has a `status` of
-`draft`, `published` or `archived`. Only members of the shared `SuperAdmins`
-group can read or write `Persona` records, drafts and archived personas
-included. Everyone else reads through `listPublishedPersonas`, which returns
-published personas in `sortOrder` without their status, IDs or timestamps, and
-leaves out fantasy panels that have no image.
+`draft`, `published` or `archived`. Anyone can read personas, whatever their
+status; only members of the shared `SuperAdmins` group can create, update or
+delete them. The homepage queries `listPersonasByStatus` for `published`, which
+returns personas in `sortOrder`, and should skip fantasy panels without an
+image.
 
 | Caller | Client auth mode | Can do |
 | --- | --- | --- |
-| Signed-out visitor | `identityPool` (default) | Call `listPublishedPersonas`; read `persona-images/*` |
-| Signed-in user | `userPool` | Call `listPublishedPersonas`; read `persona-images/*` |
-| `SuperAdmins` member | `userPool` | Create, read, update and delete `Persona` records; write and delete `persona-images/*` |
+| Signed-out visitor | `identityPool` (default) | Read personas; read `persona-images/*` |
+| Signed-in user | `userPool` | Read personas; read `persona-images/*` |
+| `SuperAdmins` member | `userPool` | Create, read, update and delete personas; write and delete `persona-images/*` |
 
 Signed-in users, SuperAdmins included, call the API with
 `authMode: 'userPool'`. The website's identity pool maps `SuperAdmins` to the

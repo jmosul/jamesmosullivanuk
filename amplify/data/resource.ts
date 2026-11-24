@@ -1,6 +1,5 @@
 import { a, defineData, type ClientSchema } from '@aws-amplify/backend'
 import { SUPER_ADMINS_GROUP } from '../auth/resource'
-import { listPublishedPersonas } from '../functions/list-published-personas/resource'
 
 export const schema = a.schema({
   PersonaStatus: a.enum(['draft', 'published', 'archived']),
@@ -56,33 +55,13 @@ export const schema = a.schema({
     .secondaryIndexes((index) => [
       index('status').sortKeys(['sortOrder']).name('personasByStatus').queryField('listPersonasByStatus'),
     ])
-    // Only SuperAdmins can read or write records, including drafts and
-    // archived personas. Visitors use listPublishedPersonas.
-    .authorization((allow) => [allow.groups([SUPER_ADMINS_GROUP])]),
-
-  /** The published view of a persona: no status, IDs or timestamps. */
-  PublicPersona: a.customType({
-    slug: a.string().required(),
-    label: a.string().required(),
-    theme: a.ref('PersonaTheme').required(),
-    name: a.string(),
-    title: a.string(),
-    content: a.string().required(),
-    panelLabel: a.string(),
-    panelHint: a.string(),
-    rotation: a.ref('PanelRotation').required(),
-    links: a.ref('PersonaLink').required().array().required(),
-    panels: a.ref('Panel').required().array().required(),
-  }),
-
-  /** Published personas in display order, readable by anyone. */
-  listPublishedPersonas: a
-    .query()
-    .returns(a.ref('PublicPersona').required().array().required())
-    .authorization((allow) => [allow.guest(), allow.authenticated()])
-    // A Lambda rather than a JS resolver: AppSync JS resolvers in Amplify
-    // don't support identity pool (guest) access.
-    .handler(a.handler.function(listPublishedPersonas)),
+    // Anyone can read personas, whatever their status; the homepage asks
+    // listPersonasByStatus for 'published'. Only SuperAdmins can write.
+    .authorization((allow) => [
+      allow.guest().to(['read']),
+      allow.authenticated().to(['read']),
+      allow.groups([SUPER_ADMINS_GROUP]),
+    ]),
 })
 
 export type Schema = ClientSchema<typeof schema>
@@ -91,7 +70,7 @@ export const data = defineData({
   schema,
   authorizationModes: {
     // Signed-out visitors read through the identity pool's guest role.
-    // SuperAdmins sign in and call with authMode: 'userPool'.
+    // Signed-in users, SuperAdmins included, call with authMode: 'userPool'.
     defaultAuthorizationMode: 'identityPool',
   },
 })
