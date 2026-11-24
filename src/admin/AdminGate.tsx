@@ -1,14 +1,31 @@
-import { Authenticator } from '@aws-amplify/ui-react'
 import { fetchAuthSession } from 'aws-amplify/auth'
-import { useEffect, useState, type ReactNode } from 'react'
-import '../styles/amplify-ui.css'
+import { useEffect, useState } from 'react'
+import { Navigate, Outlet } from 'react-router'
+import { useAuthStatus } from '../auth'
+import { paths } from '../routes'
+
+/** Require a signed-in session throughout the admin section. */
+export function AdminGate() {
+  const status = useAuthStatus()
+
+  if (status === 'checking') {
+    return <CheckingAccess />
+  }
+
+  if (status === 'signedOut') {
+    return <Navigate to={paths.home} replace />
+  }
+
+  return <Outlet />
+}
 
 /** The shared directory's group allowed to edit website content (see amplify/auth/resource.ts). */
 const SUPER_ADMINS = 'SuperAdmins'
 
 type Access = 'checking' | 'allowed' | 'denied'
 
-function RequireSuperAdmin({ children }: { children: ReactNode }) {
+/** Only SuperAdmins can manage personas. */
+export function RequireSuperAdmin() {
   const [access, setAccess] = useState<Access>('checking')
 
   useEffect(() => {
@@ -29,11 +46,7 @@ function RequireSuperAdmin({ children }: { children: ReactNode }) {
   }, [])
 
   if (access === 'checking') {
-    return (
-      <p className="page-note" role="status">
-        Checking access…
-      </p>
-    )
+    return <CheckingAccess />
   }
 
   if (access === 'denied') {
@@ -44,23 +57,13 @@ function RequireSuperAdmin({ children }: { children: ReactNode }) {
     )
   }
 
-  return <>{children}</>
+  return <Outlet />
 }
 
-/** Signs the visitor in and lets only SuperAdmins through to the admin pages. */
-export function AdminGate({ configured, children }: { configured: boolean; children: ReactNode }) {
-  if (!configured) {
-    return (
-      <p className="card" role="status">
-        Sign-in isn’t set up here: there’s no <code>amplify_outputs.json</code>. Run{' '}
-        <code>npx ampx sandbox</code> or generate outputs for a deployed branch.
-      </p>
-    )
-  }
-
+function CheckingAccess() {
   return (
-    <Authenticator hideSignUp>
-      <RequireSuperAdmin>{children}</RequireSuperAdmin>
-    </Authenticator>
+    <p className="page-note" role="status">
+      Checking access…
+    </p>
   )
 }
