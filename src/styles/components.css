@@ -195,6 +195,7 @@
 }
 
 .persona-card {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -209,6 +210,31 @@
 
 .persona-card-title {
   font-size: 2rem;
+}
+
+.persona-card-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.persona-card-link::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+}
+
+.persona-card:hover {
+  background: var(--color-surface-raised);
+}
+
+.persona-card-link:focus-visible {
+  outline: none;
+}
+
+.persona-card:has(.persona-card-link:focus-visible) {
+  clip-path: none;
+  outline: 3px solid var(--color-focus);
+  outline-offset: 3px;
 }
 
 .persona-card-byline {
