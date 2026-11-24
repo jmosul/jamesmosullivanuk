@@ -16,6 +16,11 @@ export type DraftAction =
   | { type: 'removeLink'; index: number }
   | { type: 'addPanel'; panel: Panel }
   | { type: 'setPanel'; index: number; fields: Partial<Panel> }
+  /**
+   * An uploaded image, by panel id since the panels may have moved while it
+   * uploaded. Empty alt text becomes the panel's title as it is now.
+   */
+  | { type: 'setPanelImage'; id: string; image: NonNullable<Panel['image']> }
   | { type: 'movePanel'; index: number; by: -1 | 1 }
   | { type: 'removePanel'; index: number }
 
@@ -57,6 +62,13 @@ export function draftReducer(draft: PersonaDraft, action: DraftAction): PersonaD
       return { ...draft, panels: [...draft.panels, action.panel] }
     case 'setPanel':
       return { ...draft, panels: replaceAt(draft.panels, action.index, action.fields) }
+    case 'setPanelImage':
+      return {
+        ...draft,
+        panels: draft.panels.map((panel) =>
+          panel.id === action.id ? { ...panel, image: { ...action.image, alt: action.image.alt || panel.title } } : panel,
+        ),
+      }
     case 'movePanel':
       return { ...draft, panels: moveBy(draft.panels, action.index, action.by) }
     case 'removePanel':

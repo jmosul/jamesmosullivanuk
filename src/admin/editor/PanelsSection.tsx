@@ -1,17 +1,22 @@
-import { useState, type CSSProperties, type Dispatch } from 'react'
+import { useId, useState, type CSSProperties, type Dispatch } from 'react'
 import type { ThemeTraits } from '../../theme'
+import type { PanelImageStore } from '../panelImages'
 import { placeholderPanels, newPanel, type DraftAction, type Panel, type PersonaDraft } from './draft'
 import { orNull, TextField } from './fields'
 import { ArrowIcon, CheckIcon, PlusIcon, TrashIcon, WarningIcon } from './icons'
+import { describeImage, usePanelImage, type PanelImageControl, type TrackUpload } from './usePanelImage'
 
 interface PanelsSectionProps {
   draft: PersonaDraft
   traits: ThemeTraits
   dispatch: Dispatch<DraftAction>
+  images: PanelImageStore
+  /** Wraps each upload, so the editor can hold Save until it's done. */
+  trackUpload: TrackUpload
 }
 
 /** The persona's panels in display order: add, reorder, remove, and edit one at a time. */
-export function PanelsSection({ draft, traits, dispatch }: PanelsSectionProps) {
+export function PanelsSection({ draft, traits, dispatch, images, trackUpload }: PanelsSectionProps) {
   const [openId, setOpenId] = useState<string | null>(null)
   const placeholders = placeholderPanels(draft, traits).length
 
@@ -57,6 +62,8 @@ export function PanelsSection({ draft, traits, dispatch }: PanelsSectionProps) {
               open={panel.id === openId}
               traits={traits}
               dispatch={dispatch}
+              images={images}
+              trackUpload={trackUpload}
               onToggle={() => setOpenId(panel.id === openId ? null : panel.id)}
             />
           ))}
@@ -75,10 +82,14 @@ interface PanelRowProps {
   open: boolean
   traits: ThemeTraits
   dispatch: Dispatch<DraftAction>
+  images: PanelImageStore
+  trackUpload: TrackUpload
   onToggle: () => void
 }
 
-function PanelRow({ panel, index, last, open, traits, dispatch, onToggle }: PanelRowProps) {
+function PanelRow({ panel, index, last, open, traits, dispatch, images, trackUpload, onToggle }: PanelRowProps) {
+  // Held by the row, not the fields, so an upload carries on while the panel is collapsed.
+  const image = usePanelImage({ panel, images, trackUpload, dispatch })
   const title = panel.title || 'Untitled panel'
   const needsImage = traits.panelNeedsImage && !panel.image
   const bodyId = `panel-${panel.id}`
@@ -87,7 +98,7 @@ function PanelRow({ panel, index, last, open, traits, dispatch, onToggle }: Pane
     <li className="panel-row" data-open={open}>
       <div className="panel-row-head">
         <span className="panel-row-number">{String(index + 1).padStart(2, '0')}</span>
-        <PanelThumb panel={panel} traits={traits} />
+        <PanelThumb panel={panel} traits={traits} src={image.src} />
         <button
           type="button"
           className="panel-row-toggle"
@@ -128,7 +139,7 @@ function PanelRow({ panel, index, last, open, traits, dispatch, onToggle }: Pane
       </div>
       {open && (
         <div className="panel-fields" id={bodyId}>
-          <PanelFields panel={panel} index={index} traits={traits} dispatch={dispatch} />
+          <PanelFields panel={panel} index={index} traits={traits} dispatch={dispatch} image={image} />
         </div>
       )}
     </li>
@@ -139,9 +150,17 @@ function PanelRow({ panel, index, last, open, traits, dispatch, onToggle }: Pane
  * A small stand-in for how the homepage draws the panel. The frame's look
  * comes from tokens; what goes inside follows the theme's traits.
  */
-function PanelThumb({ panel, traits }: { panel: Panel; traits: ThemeTraits }) {
+function PanelThumb({ panel, traits, src }: { panel: Panel; traits: ThemeTraits; src: string | null }) {
   const missing = traits.panelNeedsImage && !panel.image
   const usesAccent = traits.panelAccents.length > 0
+
+  if (panel.image && src) {
+    return (
+      <span className="panel-thumb" aria-hidden="true">
+        <img className="panel-thumb-image" src={src} alt="" />
+      </span>
+    )
+  }
 
   return (
     <span className="panel-thumb" data-missing={missing} style={accentStyle(panel)} aria-hidden="true">
@@ -152,9 +171,19 @@ function PanelThumb({ panel, traits }: { panel: Panel; traits: ThemeTraits }) {
   )
 }
 
-function PanelFields({ panel, index, traits, dispatch }: Omit<PanelRowProps, 'last' | 'open' | 'onToggle'>) {
+interface PanelFieldsProps {
+  panel: Panel
+  index: number
+  traits: ThemeTraits
+  dispatch: Dispatch<DraftAction>
+  image: PanelImageControl
+}
+
+function PanelFields({ panel, index, traits, dispatch, image }: PanelFieldsProps) {
   const set = (fields: Partial<Panel>) => dispatch({ type: 'setPanel', index, fields })
   const needsImage = traits.panelNeedsImage && !panel.image
+  const uploading = image.upload.status === 'uploading'
+  const imageLabelId = `image-${panel.id}`
 
   return (
     <>
@@ -163,31 +192,51 @@ function PanelFields({ panel, index, traits, dispatch }: Omit<PanelRowProps, 'la
         <TextField label="Subtitle" value={panel.subtitle} onChange={(subtitle) => set({ subtitle: orNull(subtitle) })} />
       </div>
 
-      <div className="field">
-        <span className="field-label">Image</span>
+      <div className="field" role="group" aria-labelledby={imageLabelId}>
+        <span className="field-label" id={imageLabelId}>
+          Image
+        </span>
         {panel.image ? (
           <div className="panel-image">
-            <p className="field-help">
-              {panel.image.width} × {panel.image.height}
-            </p>
+            {image.src && (
+              <img
+                className="panel-image-preview"
+                src={image.src}
+                alt={panel.image.alt}
+                width={panel.image.width}
+                height={panel.image.height}
+              />
+            )}
+            <p className="field-help">{describeImage(panel.image, image.bytes)}</p>
             <TextField
               label="Alt text"
               value={panel.image.alt}
               onChange={(alt) => panel.image && set({ image: { ...panel.image, alt } })}
             />
-            <button type="button" className="button button--quiet" onClick={() => set({ image: null })}>
-              Remove image
-            </button>
           </div>
         ) : (
           <p className={needsImage ? 'notice' : 'empty-note'}>
             {needsImage && <WarningIcon />}
             <span>
-              Image uploads aren’t available yet.{' '}
-              {needsImage ? 'This panel stays off the homepage until it has one.' : 'Without one, the symbol is shown.'}
+              No image yet.{' '}
+              {needsImage ? 'The homepage shows a placeholder until it has one.' : 'Without one, the symbol is shown.'}
             </span>
           </p>
         )}
+        <div className="panel-image-actions">
+          <ImagePicker label={panel.image ? 'Replace image' : 'Upload image'} disabled={uploading} onPick={image.start} />
+          {panel.image && (
+            <button
+              type="button"
+              className="button button--quiet"
+              disabled={uploading}
+              onClick={() => set({ image: null })}
+            >
+              Remove image
+            </button>
+          )}
+        </div>
+        <UploadStatus state={image.upload} />
       </div>
 
       {traits.panelAccents.length > 0 && (
@@ -232,3 +281,61 @@ function PanelFields({ panel, index, traits, dispatch }: Omit<PanelRowProps, 'la
 
 const accentStyle = (panel: Panel): CSSProperties | undefined =>
   panel.accent ? ({ '--panel-accent': panel.accent } as CSSProperties) : undefined
+
+/** A file input behind a button-styled label, so it reads and focuses as one control. */
+function ImagePicker({ label, disabled, onPick }: { label: string; disabled: boolean; onPick: (file: File) => void }) {
+  const id = useId()
+
+  return (
+    <span className="file-picker">
+      <input
+        id={id}
+        type="file"
+        accept="image/*"
+        className="visually-hidden"
+        disabled={disabled}
+        onChange={(event) => {
+          const file = event.target.files?.[0]
+          // Cleared so picking the same file again still fires a change.
+          event.target.value = ''
+
+          if (file) {
+            onPick(file)
+          }
+        }}
+      />
+      <label htmlFor={id} className="button button--quiet">
+        {label}
+      </label>
+    </span>
+  )
+}
+
+function UploadStatus({ state }: { state: PanelImageControl['upload'] }) {
+  const id = useId()
+
+  if (state.status === 'failed') {
+    return (
+      <p className="notice" role="alert">
+        <WarningIcon />
+        <span>{state.message}</span>
+      </p>
+    )
+  }
+
+  if (state.status !== 'uploading') {
+    return null
+  }
+
+  const { transferred = 0, total = 0 } = state.progress ?? {}
+  const percent = total > 0 ? Math.round((transferred / total) * 100) : 0
+
+  return (
+    <div className="upload-progress">
+      <span id={id} role="status">
+        Uploading image… {percent}%
+      </span>
+      <progress aria-labelledby={id} max={100} value={percent} />
+    </div>
+  )
+}

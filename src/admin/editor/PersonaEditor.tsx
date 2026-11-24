@@ -1,8 +1,9 @@
-import { useEffect, useReducer, useState } from 'react'
+import { useCallback, useEffect, useReducer, useState } from 'react'
 import { Link, useNavigate } from 'react-router'
 import { paths } from '../../routes'
 import { THEME_TRAITS, useThemeOverride } from '../../theme'
 import { messageOf } from '../messageOf'
+import { removeQuietly, staleImages, type PanelImageStore } from '../panelImages'
 import type { Persona, PersonaStore } from '../personas'
 import { draftReducer, publishBlockers, saveProblems, toDraft } from './draft'
 import { EditorBar } from './EditorBar'
@@ -15,8 +16,13 @@ interface Loaded {
   takenSlugs: string[]
 }
 
+interface Stores {
+  store: PersonaStore
+  images: PanelImageStore
+}
+
 /** /a/personas/:personaId: loads the persona, then edits it. */
-export function PersonaEditor({ store, personaId }: { store: PersonaStore; personaId: string }) {
+export function PersonaEditor({ store, images, personaId }: Stores & { personaId: string }) {
   const [loaded, setLoaded] = useState<Loaded | null>(null)
   const [error, setError] = useState<string | null>(null)
 
@@ -67,10 +73,10 @@ export function PersonaEditor({ store, personaId }: { store: PersonaStore; perso
     )
   }
 
-  return <EditorForm key={loaded.persona.id} store={store} {...loaded} />
+  return <EditorForm key={loaded.persona.id} store={store} images={images} {...loaded} />
 }
 
-function EditorForm({ store, persona, takenSlugs }: Loaded & { store: PersonaStore }) {
+function EditorForm({ store, images, persona, takenSlugs }: Loaded & Stores) {
   const navigate = useNavigate()
   const [saved, setSaved] = useState(() => toDraft(persona))
   const [draft, dispatch] = useReducer(draftReducer, saved)
@@ -78,6 +84,14 @@ function EditorForm({ store, persona, takenSlugs }: Loaded & { store: PersonaSto
   const [hasSaved, setHasSaved] = useState(false)
   const [failure, setFailure] = useState<string | null>(null)
   const [deleting, setDeleting] = useState<'idle' | 'confirm' | 'busy'>('idle')
+  const [uploads, setUploads] = useState(0)
+
+  // Saving mid-upload would store the panel without the image it's waiting for.
+  const trackUpload = useCallback(<T,>(work: Promise<T>): Promise<T> => {
+    setUploads((count) => count + 1)
+
+    return work.finally(() => setUploads((count) => count - 1))
+  }, [])
 
   // The whole page wears the persona's theme, and follows it as it's changed.
   useThemeOverride(draft.theme)
@@ -87,9 +101,10 @@ function EditorForm({ store, persona, takenSlugs }: Loaded & { store: PersonaSto
   const problems = saveProblems(draft, takenSlugs)
   const publishedButNotReady = draft.status === 'published' && blockers.length > 0
   const dirty = JSON.stringify(draft) !== JSON.stringify(saved)
-  const canSave = dirty && !saving && problems.length === 0 && !publishedButNotReady
+  const canSave = dirty && !saving && uploads === 0 && problems.length === 0 && !publishedButNotReady
 
   const save = async () => {
+    const previous = saved
     const snapshot = draft
     setSaving(true)
     setFailure(null)
@@ -98,6 +113,10 @@ function EditorForm({ store, persona, takenSlugs }: Loaded & { store: PersonaSto
       await store.update(persona.id, snapshot)
       setSaved(snapshot)
       setHasSaved(true)
+      // Only once the record no longer points at them. Images uploaded and then
+      // dropped before a save were never on the record, so they're left behind
+      // as orphans: harmless, as nothing links to them and guests can't list.
+      void removeQuietly(images, staleImages(previous.panels, snapshot.panels))
     } catch (error) {
       setFailure(messageOf(error))
     } finally {
@@ -117,6 +136,7 @@ function EditorForm({ store, persona, takenSlugs }: Loaded & { store: PersonaSto
 
     try {
       await store.remove(persona.id)
+      void removeQuietly(images, staleImages(saved.panels, []))
       void navigate(paths.adminPersonas)
     } catch (error) {
       setFailure(messageOf(error))
@@ -126,11 +146,13 @@ function EditorForm({ store, persona, takenSlugs }: Loaded & { store: PersonaSto
 
   const saveState = saving
     ? 'Saving…'
-    : dirty
-      ? 'Unsaved changes'
-      : hasSaved
-        ? 'All changes saved'
-        : 'No changes yet'
+    : uploads > 0
+      ? 'Uploading image…'
+      : dirty
+        ? 'Unsaved changes'
+        : hasSaved
+          ? 'All changes saved'
+          : 'No changes yet'
 
   return (
     <>
@@ -176,7 +198,7 @@ function EditorForm({ store, persona, takenSlugs }: Loaded & { store: PersonaSto
           deleting={deleting}
           onDelete={remove}
         />
-        <PanelsSection draft={draft} traits={traits} dispatch={dispatch} />
+        <PanelsSection draft={draft} traits={traits} dispatch={dispatch} images={images} trackUpload={trackUpload} />
       </main>
     </>
   )

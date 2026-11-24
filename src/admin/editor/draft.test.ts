@@ -35,6 +35,18 @@ test('movePanel swaps neighbours and stops at the ends', () => {
   expect(ids(draftReducer(start, { type: 'movePanel', index: 0, by: -1 }))).toEqual(['a', 'b', 'c'])
 })
 
+test('setPanelImage finds the panel by id and defaults the alt text to its title', () => {
+  const image = { alt: '', width: 1600, height: 1200, variants: [] }
+  const start = draft({ panels: [panel('a', { title: 'Alpha' }), panel('b', { title: 'Beta' })] })
+  const set = draftReducer(start, { type: 'setPanelImage', id: 'b', image })
+
+  expect(set.panels.map((p) => p.image)).toEqual([null, { ...image, alt: 'Beta' }])
+  expect(draftReducer(start, { type: 'setPanelImage', id: 'a', image: { ...image, alt: 'Given' } }).panels[0].image?.alt).toBe(
+    'Given',
+  )
+  expect(draftReducer(start, { type: 'setPanelImage', id: 'gone', image }).panels).toEqual(start.panels)
+})
+
 test('link actions add, change and remove', () => {
   let d = draftReducer(draft(), { type: 'addLink' })
   d = draftReducer(d, { type: 'setLink', index: 0, fields: { label: 'LinkedIn' } })
