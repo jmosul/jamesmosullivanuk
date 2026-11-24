@@ -157,3 +157,154 @@
   line-height: 0.95;
   text-wrap: balance;
 }
+
+/* ── Admin ── */
+
+.admin {
+  display: grid;
+  gap: 24px;
+  width: min(100%, 1320px);
+  margin: 0 auto;
+  padding: 32px clamp(16px, 5.5vw, 88px) 64px;
+}
+
+.admin-intro,
+.page-note {
+  margin: 0;
+  color: var(--color-muted);
+}
+
+.persona-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 360px), 1fr));
+  gap: 24px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.persona-grid > li {
+  display: grid;
+}
+
+/* A card carries its own data-theme, so it shows the persona's look. */
+.persona-card,
+.persona-add,
+.persona-form {
+  min-height: 280px;
+}
+
+.persona-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 28px;
+  background: var(--color-surface);
+  color: var(--color-body);
+  border: var(--card-border);
+  border-top: var(--card-border-top);
+  border-radius: var(--radius);
+  clip-path: var(--shape-card);
+}
+
+.persona-card-title {
+  font-size: 2rem;
+}
+
+.persona-card-byline {
+  margin: 0;
+  color: var(--color-ink);
+}
+
+.persona-card-content {
+  display: -webkit-box;
+  margin: 0;
+  overflow: hidden;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+}
+
+.persona-card-meta {
+  margin-top: auto;
+}
+
+.persona-add {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 28px;
+  border: 0;
+  background: var(--color-surface-raised);
+  color: var(--color-ink);
+  clip-path: var(--shape-card);
+  font-family: var(--font-body);
+  cursor: pointer;
+}
+
+.persona-add:hover {
+  background: var(--color-accent-soft);
+}
+
+.persona-add:focus-visible {
+  clip-path: none;
+}
+
+.persona-add-mark {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+  font-size: 2.25rem;
+  line-height: 1;
+}
+
+.persona-add-title {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+}
+
+.persona-add-hint {
+  color: var(--color-muted);
+}
+
+.persona-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.field {
+  display: grid;
+  gap: 6px;
+}
+
+.field label {
+  color: var(--color-muted);
+  font-family: var(--font-label);
+  font-size: var(--label-size);
+  letter-spacing: var(--label-tracking);
+  text-transform: var(--label-case);
+}
+
+.field input,
+.field textarea,
+.field select {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 14px;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius);
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font: inherit;
+}
+
+.persona-form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}

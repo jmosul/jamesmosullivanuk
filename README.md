@@ -14,6 +14,8 @@ The site has a sci-fi and a fantasy theme, done in CSS custom properties; see [d
 
 `/signin` uses Amplify UI's Authenticator against the shared user pool. It needs `amplify_outputs.json` (from `npx ampx sandbox`, or `npx ampx generate outputs` for a deployed branch); without it the page says sign-in isn't set up, and everything else still builds and runs.
 
+`/a/personas` is the admin list of personas, for `SuperAdmins` members only. Its first tile opens a form that creates a draft persona and then goes to `/a/personas/{id}` (an empty page for now). The draft's defaults live in `src/admin/personas.ts`: status `draft`, rotation `ordered`, no links or panels, `sortOrder` one more than the highest (0 for the first), and a slug made from the name, with `-2`, `-3`... added if it's taken.
+
 ## Backend layout
 
 | File | Defines |
