@@ -1,3 +1,4 @@
+import { fetchAuthSession } from 'aws-amplify/auth'
 import { generateClient } from 'aws-amplify/data'
 import type { Schema } from '../../amplify/data/resource'
 import type { Theme } from '../theme'
@@ -57,12 +58,13 @@ export interface HomePersonaSource {
   listPublished(): Promise<HomePersona[]>
 }
 
-/** Published personas from the API, read as a guest. */
+/** Published personas from the API for both guests and signed-in visitors. */
 export function createPublicPersonaSource(): HomePersonaSource {
-  const { Persona } = generateClient<Schema>().models
-
   return {
     async listPublished() {
+      const { tokens } = await fetchAuthSession()
+      const authMode = tokens?.accessToken ? 'userPool' : 'identityPool'
+      const { Persona } = generateClient<Schema>({ authMode }).models
       const personas: Persona[] = []
       let nextToken: string | null | undefined
       do {
