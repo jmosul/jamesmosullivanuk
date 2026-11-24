@@ -44,7 +44,18 @@ const PERSONAS = [
     title: null,
     content: 'I build worlds.',
     links: [],
-    panels: [panel('riemar'), panel('maeve', { image: { src: '/maeve.webp', alt: 'Maeve', width: 2, height: 3 } })],
+    panels: [
+      panel('riemar'),
+      panel('maeve', {
+        image: {
+          src: '/maeve-960.webp',
+          srcSet: '/maeve-480.webp 480w, /maeve-960.webp 960w',
+          alt: 'Maeve',
+          width: 2,
+          height: 3,
+        },
+      }),
+    ],
   }),
 ]
 
@@ -124,7 +135,18 @@ test('fantasy panels without an image are drawn as a placeholder', async () => {
   const fantasy = container.querySelector('.persona-layer[data-theme="fantasy"]')
 
   expect(fantasy?.querySelectorAll('[data-placeholder="portrait"]')).toHaveLength(1)
-  expect(fantasy?.querySelector('img.portrait')?.getAttribute('src')).toBe('/maeve.webp')
+  expect(fantasy?.querySelector('img.portrait')?.getAttribute('src')).toBe('/maeve-960.webp')
+})
+
+test('panel images offer every rendition, sized as drawn at the front', async () => {
+  const { container } = renderHome()
+  await screen.findByText('I build software.')
+
+  const portrait = container.querySelector('.persona-layer[data-theme="fantasy"] img.portrait')
+
+  expect(portrait?.getAttribute('srcset')).toBe('/maeve-480.webp 480w, /maeve-960.webp 960w')
+  // jsdom's window is 1024×768, so wide: a 2:3 portrait 768px tall, at the front slot's 0.96.
+  expect(portrait?.getAttribute('sizes')).toBe('492px')
 })
 
 test('a single persona has no toggles', async () => {

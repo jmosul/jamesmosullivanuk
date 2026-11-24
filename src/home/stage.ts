@@ -115,3 +115,7 @@ export function viewportOf(width: number, height: number): Viewport {
 }
 
 export const slotsFor = (slots: PanelSlots, viewport: Viewport) => (viewport.narrow ? slots.narrow : slots.wide)
+
+/** The largest scale a panel is drawn at while it can be seen. */
+export const largestVisibleScale = (slots: readonly PanelSlot[]) =>
+  Math.max(...slots.filter((slot) => slot.opacity > 0).map((slot) => slot.scale))

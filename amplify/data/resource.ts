@@ -12,12 +12,24 @@ export const schema = a.schema({
     external: a.boolean().required(),
   }),
 
-  PanelImage: a.customType({
-    /** Storage path, e.g. persona-images/<uuid>.webp. */
+  /** One rendition of a panel image, resolved with getUrl from its path. */
+  PanelImageFile: a.customType({
+    /** Storage path, e.g. persona-images/<imageId>/960.webp. */
     path: a.string().required(),
-    alt: a.string().required(),
+    /** Intrinsic size in px. */
     width: a.integer().required(),
     height: a.integer().required(),
+    /** e.g. image/webp, or image/png where the browser couldn't encode WebP. */
+    contentType: a.string().required(),
+  }),
+
+  PanelImage: a.customType({
+    alt: a.string().required(),
+    /** Intrinsic size of the largest variant, used for the panel's aspect. */
+    width: a.integer().required(),
+    height: a.integer().required(),
+    /** The same image at several widths, served as a srcset. */
+    variants: a.ref('PanelImageFile').required().array().required(),
   }),
 
   /** Panels are stored on their persona, in display order. */

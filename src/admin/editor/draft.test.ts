@@ -62,7 +62,12 @@ test('lists what a persona is missing before it can be published', () => {
 
 test('fantasy panels without an image are placeholders, not blockers', () => {
   const traits = THEME_TRAITS.fantasy
-  const image = { path: 'persona-images/a.webp', alt: 'A', width: 2, height: 3 }
+  const image = {
+    alt: 'A',
+    width: 2,
+    height: 3,
+    variants: [{ path: 'persona-images/a/480.webp', width: 2, height: 3, contentType: 'image/webp' }],
+  }
   const withPanels = draft({ theme: 'fantasy', panels: [panel('a'), panel('b', { image })] })
 
   expect(publishBlockers(withPanels)).toEqual([])
