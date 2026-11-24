@@ -4,6 +4,7 @@ import type { Theme } from '../theme'
 
 type Persona = Schema['Persona']['type']
 type Panel = Persona['panels'][number]
+type PanelImage = NonNullable<Panel['image']>
 
 export interface HomeLink {
   label: string
@@ -11,12 +12,25 @@ export interface HomeLink {
   external: boolean
 }
 
+/** A panel image with its renditions' addresses signed. */
+export interface HomeImage {
+  /** The largest rendition that could be signed. */
+  src: string
+  /** Every signed rendition, as `url 960w, …`. */
+  srcSet: string
+  alt: string
+  /** Intrinsic size of the largest rendition, for the panel's aspect. */
+  width: number
+  height: number
+}
+
 /** A panel as the homepage draws it, with its image's address resolved. */
 export interface HomePanel {
   id: string
   title: string
   subtitle: string | null
-  image: { src: string; alt: string; width: number; height: number } | null
+  /** Null when the panel has no image, or none of its renditions could be signed. */
+  image: HomeImage | null
   symbol: string | null
   accent: string | null
 }
@@ -84,18 +98,57 @@ async function toHomePersona(persona: Persona): Promise<HomePersona> {
 }
 
 async function toHomePanel(panel: Panel): Promise<HomePanel> {
-  const { image } = panel
-
   return {
     id: panel.id,
     title: panel.title,
     subtitle: panel.subtitle ?? null,
-    image: image
-      ? { src: await imageUrl(image.path), alt: image.alt, width: image.width, height: image.height }
-      : null,
+    image: panel.image ? await toHomeImage(panel.image) : null,
     symbol: panel.symbol ?? null,
     accent: panel.accent ?? null,
   }
+}
+
+/**
+ * Signs every rendition and lists them as a srcset, largest as `src`. A
+ * rendition that can't be signed is left out; if none can, the panel goes
+ * without an image (a placeholder or symbol) rather than failing the page.
+ */
+export async function toHomeImage(image: PanelImage): Promise<HomeImage | null> {
+  const variants = uniqueByWidth(image.variants)
+
+  if (variants.length === 0) {
+    return null
+  }
+
+  const signed = await Promise.allSettled(variants.map((variant) => imageUrl(variant.path)))
+  const sources: { url: string; width: number }[] = []
+
+  signed.forEach((result, index) => {
+    if (result.status === 'fulfilled') {
+      sources.push({ url: result.value, width: variants[index].width })
+    } else {
+      console.warn(`Couldn’t sign ${variants[index].path}`, result.reason)
+    }
+  })
+
+  if (sources.length === 0) {
+    return null
+  }
+
+  return {
+    src: sources[sources.length - 1].url,
+    srcSet: sources.map(({ url, width }) => `${url} ${width}w`).join(', '),
+    alt: image.alt,
+    width: image.width,
+    height: image.height,
+  }
+}
+
+/** Smallest first, one per width, since a srcset can't repeat a descriptor. */
+function uniqueByWidth<T extends { width: number }>(variants: readonly T[]): T[] {
+  const sorted = [...variants].sort((a, b) => a.width - b.width)
+
+  return sorted.filter((variant, index) => index === 0 || variant.width !== sorted[index - 1].width)
 }
 
 // Storage is only loaded once a panel has an image to show.

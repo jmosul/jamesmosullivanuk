@@ -2,6 +2,7 @@ import { describe, expect, test } from 'vitest'
 import { THEME_TRAITS } from '../theme'
 import {
   clampProgress,
+  largestVisibleScale,
   onStage,
   orderedSequence,
   placeAt,
@@ -90,4 +91,9 @@ test('narrow viewports are phones and portrait windows', () => {
   expect(viewportOf(390, 844).narrow).toBe(true)
   expect(viewportOf(1000, 1000).narrow).toBe(true)
   expect(viewportOf(1440, 300).height).toBe(560)
+})
+
+test('the largest visible scale ignores slots a panel is faded out in', () => {
+  expect(largestVisibleScale(THEME_TRAITS.scifi.panelSlots.wide)).toBe(1)
+  expect(largestVisibleScale(THEME_TRAITS.fantasy.panelSlots.narrow)).toBe(0.52)
 })

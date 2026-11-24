@@ -1,9 +1,9 @@
 import { memo, type CSSProperties } from 'react'
 import { THEME_TRAITS } from '../theme'
 import { BACKDROPS } from './backdrops'
-import { PANEL_DRAWINGS } from './drawings'
+import { imageSizes, PANEL_DRAWINGS } from './drawings'
 import type { HomePersona } from './personas'
-import { onStage, placeAt, slotsFor, type Viewport } from './stage'
+import { largestVisibleScale, onStage, placeAt, slotsFor, type Viewport } from './stage'
 
 interface PersonaLayerProps {
   persona: HomePersona
@@ -28,8 +28,10 @@ export const PersonaLayer = memo(function PersonaLayer({
   viewport,
 }: PersonaLayerProps) {
   const Backdrop = BACKDROPS[persona.theme]
-  const { Drawing, box } = PANEL_DRAWINGS[persona.theme]
+  const drawing = PANEL_DRAWINGS[persona.theme]
+  const { Drawing, box } = drawing
   const slots = slotsFor(THEME_TRAITS[persona.theme].panelSlots, viewport)
+  const largestScale = largestVisibleScale(slots)
   const visible = onStage(sequence, progress)
 
   return (
@@ -53,7 +55,11 @@ export const PersonaLayer = memo(function PersonaLayer({
 
             return (
               <div key={panel.id} className="stage-panel" data-on-stage={relative !== undefined} style={style}>
-                <Drawing panel={panel} number={index + 1} />
+                <Drawing
+                  panel={panel}
+                  number={index + 1}
+                  imageSizes={imageSizes(drawing, size, largestScale)}
+                />
               </div>
             )
           })}

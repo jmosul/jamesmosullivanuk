@@ -91,7 +91,10 @@ colours inside a drawing (star tints, wash pigments) are written in place.
 
 `PANEL_DRAWINGS` also gives each theme's panel size (`box`): tiles are a
 fixed 330×440 scaled with the window's height; portraits stand the full
-height at the image's proportions (2:3 for a placeholder).
+height at the image's proportions (2:3 for a placeholder). Each also says
+how wide its image is drawn within the box (`imageWidth`: the 150px logo, or
+the whole portrait), which with the front slot's scale gives the image's
+`sizes`, so the browser picks the right rendition from its `srcset`.
 
 ### Persona accents
 
@@ -130,8 +133,11 @@ HomePage                 --progress on .home; wheel, swipe
   which would be contorted in CSS, so it's computed in TypeScript.
 - **Panel images.** Fantasy panels without an image show a placeholder figure
   (`traits.panelNeedsImage`); the editor flags them with "Needs image" but
-  doesn't block publishing. Image addresses are signed with `getUrl` for an
-  hour, and Amplify Storage is only loaded once a panel has an image.
+  doesn't block publishing. Each image is stored as several renditions
+  (`PanelImage.variants`); every one is signed with `getUrl` for an hour and
+  offered as a `srcset`, largest as `src`. Renditions that fail to sign are
+  left out, and if none sign the panel is drawn without an image. Amplify
+  Storage is only loaded once a panel has an image.
 - **Narrow layout.** Phones and portrait windows (`viewportOf` in `stage.ts`,
   mirrored by the media query in `home.css`) use the narrow slots, a two-up
   toggle bar, and a caption bar with the arrows either side.
