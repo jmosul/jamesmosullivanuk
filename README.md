@@ -10,6 +10,38 @@ npm run dev
 
 Run `npm run lint` for Oxlint, `npm test` for Vitest, and `npm run build` for TypeScript checks and the production bundle. Run `npm run preview` to serve the production build locally.
 
+## Backend layout
+
+| File | Defines |
+| --- | --- |
+| `amplify/backend.ts` | The shared user pool and `SuperAdmins` group, plus the website's app client, identity pool and IAM roles |
+| `amplify/auth/resource.ts` | `referenceAuth`, which registers the shared pool and the website's identity pool with Amplify |
+| `amplify/data/resource.ts` | The `Persona` model and the public `listPublishedPersonas` query |
+| `amplify/functions/list-published-personas/` | The Lambda behind `listPublishedPersonas` |
+| `amplify/storage/resource.ts` | The `websiteMedia` bucket for persona images |
+
+### Website content and access
+
+A `Persona` holds its links and panels in display order, and has a `status` of
+`draft`, `published` or `archived`. Only members of the shared `SuperAdmins`
+group can read or write `Persona` records, drafts and archived personas
+included. Everyone else reads through `listPublishedPersonas`, which returns
+published personas in `sortOrder` without their status, IDs or timestamps, and
+leaves out fantasy panels that have no image.
+
+| Caller | Client auth mode | Can do |
+| --- | --- | --- |
+| Signed-out visitor | `identityPool` (default) | Call `listPublishedPersonas`; read `persona-images/*` |
+| Signed-in user | `userPool` | Call `listPublishedPersonas`; read `persona-images/*` |
+| `SuperAdmins` member | `userPool` | Create, read, update and delete `Persona` records; write and delete `persona-images/*` |
+
+Signed-in users, SuperAdmins included, call the API with
+`authMode: 'userPool'`. The website's identity pool maps `SuperAdmins` to the
+website's own SuperAdmin role through a role-mapping rule rather than a role on
+the shared group, so other apps can map the group to their own roles. Amplify
+manages its tables, bucket and generated roles; the shared pool keeps its
+retain and deletion-protection settings.
+
 ## Deploy the website and shared user pool
 
 Amplify Hosting serves the static Vite build from `dist/`. On the default
