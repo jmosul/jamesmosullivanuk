@@ -1,8 +1,14 @@
 import { afterEach, beforeEach, expect, test, vi } from 'vitest'
-import { toHomeImage } from './personas'
+import { createPublicPersonaSource, toHomeImage } from './personas'
 
-const getUrl = vi.hoisted(() => vi.fn())
+const { fetchAuthSession, generateClient, getUrl } = vi.hoisted(() => ({
+  fetchAuthSession: vi.fn(),
+  generateClient: vi.fn(),
+  getUrl: vi.fn(),
+}))
 
+vi.mock('aws-amplify/auth', () => ({ fetchAuthSession }))
+vi.mock('aws-amplify/data', () => ({ generateClient }))
 vi.mock('aws-amplify/storage', () => ({ getUrl }))
 
 const signed = ({ path }: { path: string }) => Promise.resolve({ url: new URL(`https://cdn.test/${path}?sig=1`) })
@@ -28,7 +34,22 @@ beforeEach(() => {
 
 afterEach(() => {
   vi.restoreAllMocks()
-  getUrl.mockReset()
+  vi.resetAllMocks()
+})
+
+test.each([
+  { visitor: 'guest', session: {}, authMode: 'identityPool' },
+  { visitor: 'signed-in user', session: { tokens: { accessToken: {} } }, authMode: 'userPool' },
+])('loads published personas as a $visitor using $authMode', async ({ session, authMode }) => {
+  const listPersonasByStatus = vi.fn().mockResolvedValue({
+    data: [{ slug: 'maeve', label: 'Maeve', content: 'Welcome', links: [], panels: [] }],
+  })
+  fetchAuthSession.mockResolvedValue(session)
+  generateClient.mockReturnValue({ models: { Persona: { listPersonasByStatus } } })
+
+  expect(await createPublicPersonaSource().listPublished()).toMatchObject([{ id: 'maeve', label: 'Maeve' }])
+  expect(generateClient).toHaveBeenCalledWith({ authMode })
+  expect(listPersonasByStatus).toHaveBeenCalledWith({ status: 'published' }, { nextToken: undefined })
 })
 
 test('signs every rendition into a srcset, smallest first, with the largest as src', async () => {
