@@ -1,5 +1,5 @@
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react'
-import { fetchAuthSession, getCurrentUser } from 'aws-amplify/auth'
+import * as auth from 'aws-amplify/auth'
 import { Hub } from 'aws-amplify/utils'
 import { useEffect } from 'react'
 import { MemoryRouter, useLocation } from 'react-router'
@@ -7,16 +7,6 @@ import { afterEach, expect, test, vi } from 'vitest'
 import { configureAmplify } from './amplify'
 import { AppRoutes } from './App'
 import { ThemeProvider } from './theme'
-
-vi.mock(import('aws-amplify/auth'), async (importOriginal) => {
-  const auth = await importOriginal()
-
-  return {
-    ...auth,
-    fetchAuthSession: vi.fn(auth.fetchAuthSession),
-    getCurrentUser: vi.fn(auth.getCurrentUser),
-  }
-})
 
 vi.mock(import('./home/personas'), () => ({
   createPublicPersonaSource: () => ({ listPublished: async () => [] }),
@@ -31,7 +21,7 @@ const user = { username: 'test-user', userId: 'test-id' }
 afterEach(() => {
   cleanup()
   localStorage.clear()
-  vi.resetAllMocks()
+  vi.restoreAllMocks()
 })
 
 function renderAt(path: string, authConfigured = false) {
@@ -104,9 +94,9 @@ test('redirects successful sign-in through the admin index to personas', async (
 })
 
 test('links an existing session to admin and returns home after sign-out', async () => {
-  vi.mocked(getCurrentUser).mockResolvedValueOnce(user)
+  vi.spyOn(auth, 'getCurrentUser').mockResolvedValueOnce(user)
   const idToken = { payload: { 'cognito:groups': ['SuperAdmins'] } }
-  vi.mocked(fetchAuthSession).mockResolvedValueOnce({ tokens: { idToken, accessToken: idToken } })
+  vi.spyOn(auth, 'fetchAuthSession').mockResolvedValueOnce({ tokens: { idToken, accessToken: idToken } })
   const locations = renderAt('/', true)
 
   const adminLink = await screen.findByRole('link', { name: 'Admin' })
