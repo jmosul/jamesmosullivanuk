@@ -27,7 +27,7 @@ export function AppRoutes({ authConfigured }: AppProps) {
   return (
     <Routes>
       <Route element={<SiteLayout />}>
-        <Route path={paths.home} element={<HomeScreen />} />
+        <Route path={paths.home} element={<HomeScreen configured={authConfigured} />} />
         <Route
           path={paths.signIn}
           element={

@@ -1,6 +1,6 @@
 import { useState, type CSSProperties, type Dispatch } from 'react'
 import type { ThemeTraits } from '../../theme'
-import { hiddenPanels, newPanel, type DraftAction, type Panel, type PersonaDraft } from './draft'
+import { placeholderPanels, newPanel, type DraftAction, type Panel, type PersonaDraft } from './draft'
 import { orNull, TextField } from './fields'
 import { ArrowIcon, CheckIcon, PlusIcon, TrashIcon, WarningIcon } from './icons'
 
@@ -13,7 +13,7 @@ interface PanelsSectionProps {
 /** The persona's panels in display order: add, reorder, remove, and edit one at a time. */
 export function PanelsSection({ draft, traits, dispatch }: PanelsSectionProps) {
   const [openId, setOpenId] = useState<string | null>(null)
-  const hidden = hiddenPanels(draft, traits).length
+  const placeholders = placeholderPanels(draft, traits).length
 
   const add = () => {
     const panel = newPanel(traits)
@@ -36,12 +36,12 @@ export function PanelsSection({ draft, traits, dispatch }: PanelsSectionProps) {
         </button>
       </header>
 
-      {hidden > 0 && (
+      {placeholders > 0 && (
         <p className="notice" role="note">
           <WarningIcon />
           <span>
-            {hidden === 1 ? '1 panel needs an image before it shows' : `${hidden} panels need an image before they show`}{' '}
-            on the homepage.
+            {placeholders === 1 ? '1 panel has no image, so it shows' : `${placeholders} panels have no image, so they show`}{' '}
+            a placeholder on the homepage.
           </span>
         </p>
       )}
