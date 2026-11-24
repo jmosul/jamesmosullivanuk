@@ -10,6 +10,10 @@ npm run dev
 
 Run `npm run lint` for Oxlint, `npm test` for Vitest, and `npm run build` for TypeScript checks and the production bundle. Run `npm run preview` to serve the production build locally.
 
+The site has a sci-fi and a fantasy theme, done in CSS custom properties; see [docs/Themes.md](docs/Themes.md).
+
+`/signin` uses Amplify UI's Authenticator against the shared user pool. It needs `amplify_outputs.json` (from `npx ampx sandbox`, or `npx ampx generate outputs` for a deployed branch); without it the page says sign-in isn't set up, and everything else still builds and runs.
+
 ## Backend layout
 
 | File | Defines |

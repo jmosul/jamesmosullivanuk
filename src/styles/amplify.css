@@ -1,0 +1,45 @@
+/*
+ * Amplify UI (the Authenticator) in the current theme. Amplify's own
+ * variables are pointed at our tokens once, so switching data-theme restyles
+ * it with no per-theme rules. Amplify declares these on `:root` too, but in
+ * the `amplify-ui` cascade layer (amplify-ui.css), so these win.
+ */
+
+:root {
+  --amplify-fonts-default-variable: var(--font-body);
+  --amplify-fonts-default-static: var(--font-body);
+
+  --amplify-colors-font-primary: var(--color-ink);
+  --amplify-colors-font-secondary: var(--color-body);
+  --amplify-colors-font-tertiary: var(--color-muted);
+  --amplify-colors-font-interactive: var(--color-accent);
+  --amplify-colors-font-hover: var(--color-ink);
+  --amplify-colors-font-focus: var(--color-ink);
+  --amplify-colors-font-active: var(--color-ink);
+  --amplify-colors-font-inverse: var(--color-on-accent);
+
+  --amplify-colors-background-primary: var(--color-surface);
+  --amplify-colors-background-secondary: var(--color-surface-raised);
+  --amplify-colors-background-tertiary: var(--color-surface-raised);
+
+  --amplify-colors-border-primary: var(--color-line);
+  --amplify-colors-border-secondary: var(--color-line);
+  --amplify-colors-border-tertiary: var(--color-line);
+  --amplify-colors-border-focus: var(--color-focus);
+
+  --amplify-colors-primary-10: var(--color-accent-soft);
+  --amplify-colors-primary-20: var(--color-accent-soft);
+  --amplify-colors-primary-40: var(--color-accent);
+  --amplify-colors-primary-60: var(--color-accent);
+  --amplify-colors-primary-80: var(--color-accent);
+  --amplify-colors-primary-90: var(--color-accent-hover);
+  --amplify-colors-primary-100: var(--color-accent-hover);
+
+  --amplify-radii-xs: var(--radius);
+  --amplify-radii-small: var(--radius);
+  --amplify-radii-medium: var(--radius);
+  --amplify-radii-large: var(--radius);
+
+  --amplify-components-authenticator-router-box-shadow: none;
+  --amplify-components-fieldcontrol-background-color: var(--color-bg);
+}
