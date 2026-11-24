@@ -8,7 +8,7 @@ npm ci
 npm run dev
 ```
 
-Run `npm run lint` for Oxlint, `npm test` for Vitest, and `npm run build` for TypeScript checks and the production bundle. Run `npm run preview` to serve the production build locally.
+Run `npm run lint` for Oxlint, `npm test` for Vitest (jsdom tests, plus `*.browser.test.ts` in headless Chromium; run `npx playwright install chromium` once first), and `npm run build` for TypeScript checks and the production bundle. Run `npm run preview` to serve the production build locally.
 
 The site has a sci-fi and a fantasy theme, done in CSS custom properties; see [docs/Themes.md](docs/Themes.md).
 

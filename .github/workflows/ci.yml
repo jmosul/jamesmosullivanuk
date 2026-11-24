@@ -34,4 +34,6 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci --prefer-offline --no-audit --no-fund
+      # The *.browser.test.ts files run in a real Chromium through Playwright.
+      - run: npx playwright install --with-deps chromium
       - run: npm test

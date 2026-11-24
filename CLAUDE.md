@@ -23,6 +23,8 @@
 
 Before pushing, run `npm run lint`, `npm test` and `npm run build`.
 
+`npm test` runs two Vitest projects: `jsdom` for `*.test.ts(x)`, and `browser` for `*.browser.test.ts`, which runs in headless Chromium through Playwright. Use a browser test only for what jsdom can't do (canvas encoding, `createImageBitmap`). Playwright needs a Chromium: run `npx playwright install chromium` once, or point `CHROMIUM_EXECUTABLE_PATH` at an existing build (in Claude's cloud sessions, `/opt/pw-browsers/chromium`).
+
 ## Themes
 
 The aim is as little per-theme repetition as possible. Push every difference as far down this list as it will go, and only move up when the layer below genuinely can't express it. CSS is the preferred home, but don't contort markup or CSS to keep something out of TypeScript. Full detail in [docs/Themes.md](docs/Themes.md).
