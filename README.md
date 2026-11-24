@@ -38,8 +38,8 @@ image.
 
 | Caller | Client auth mode | Can do |
 | --- | --- | --- |
-| Signed-out visitor | `identityPool` (default) | Read personas; read `persona-images/*` |
-| Signed-in user | `userPool` | Read personas; read `persona-images/*` |
+| Signed-out visitor | `identityPool` (default) | Read personas; get `persona-images/*` by path |
+| Signed-in user | `userPool` | Read personas; get `persona-images/*` by path |
 | `SuperAdmins` member | `userPool` | Create, read, update and delete personas; write and delete `persona-images/*` |
 
 Signed-in users, SuperAdmins included, call the API with
@@ -48,6 +48,12 @@ website's own SuperAdmin role through a role-mapping rule rather than a role on
 the shared group, so other apps can map the group to their own roles. Amplify
 manages its tables, bucket and generated roles; the shared pool keeps its
 retain and deletion-protection settings.
+
+Nobody can list `persona-images/`: images are fetched by the path saved on a
+persona, so drafts and orphaned uploads stay undiscoverable. On `main` the
+bucket is kept (with its images) if the storage resource is ever removed;
+other branches and sandboxes delete it. A lifecycle rule aborts multipart
+uploads left incomplete for a day.
 
 ## Deploy the website and shared user pool
 
