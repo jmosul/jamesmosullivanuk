@@ -36,3 +36,7 @@ The aim is as little per-theme repetition as possible. Push every difference as 
 Never write `theme === 'fantasy'`, and never put a `[data-theme]` selector outside `tokens.css`. If something can't be said with the layers above, say why in review before adding a new mechanism.
 
 The page's theme is `data-theme` on `<html>`, set by `ThemeProvider`. A page showing a specific persona calls `useThemeOverride(persona.theme)` to wear that persona's theme without changing the visitor's stored choice. An element can also carry its own `data-theme` (e.g. persona cards on the list) to show a theme inside a page of another.
+
+## Images
+
+Panel images are rendered in the browser, uploaded under immutable keys and cleaned up only after the record stops pointing at them. Keys, access rules, renditions, cleanup and accepted orphans are in [docs/Images.md](docs/Images.md).

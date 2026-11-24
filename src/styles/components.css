@@ -779,11 +779,58 @@
   padding: 6px 16px 20px;
 }
 
+.panel-thumb-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 .panel-image {
   display: grid;
   justify-items: start;
   gap: 10px;
 }
+
+.panel-image-preview {
+  width: auto;
+  max-width: min(100%, 240px);
+  height: auto;
+  max-height: 240px;
+  background: var(--color-surface-raised);
+  clip-path: var(--shape-thumb);
+}
+
+.panel-image-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* The input is visually hidden; its label is the button people see and click. */
+.file-picker input:focus-visible + .button {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 3px;
+  clip-path: none;
+}
+
+.file-picker input:disabled + .button {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.upload-progress {
+  display: grid;
+  gap: 6px;
+  max-width: 320px;
+  color: var(--color-muted);
+  font-size: 0.9375rem;
+}
+
+.upload-progress progress {
+  width: 100%;
+  accent-color: var(--color-accent);
+}
+
 
 .swatches {
   display: flex;

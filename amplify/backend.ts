@@ -107,12 +107,25 @@ bindSharedAuth({
 // The policy lives in the storage stack so it depends on SharedAuth, not the
 // other way round. Images are addressed by the path saved on the persona, so
 // SuperAdmins don't need to list the bucket either.
+//
+// uploadData goes multipart above 5 MB, which a 1600px PNG (Safari's fallback)
+// can reach. Before starting one, Amplify looks in localStorage for an
+// unfinished upload of the same file to the same key and, if it finds one,
+// calls ListParts to resume it. That's object-level
+// s3:ListMultipartUploadParts, not s3:ListBucket, so it doesn't let anyone
+// list the folder.
 const { bucket, cfnResources } = backend.storage.resources
 new Policy(Stack.of(bucket), 'SuperAdminPersonaImages', {
   roles: [websiteSuperAdminRole],
   statements: [
     new PolicyStatement({
-      actions: ['s3:GetObject', 's3:PutObject', 's3:DeleteObject', 's3:AbortMultipartUpload'],
+      actions: [
+        's3:GetObject',
+        's3:PutObject',
+        's3:DeleteObject',
+        's3:AbortMultipartUpload',
+        's3:ListMultipartUploadParts',
+      ],
       resources: [bucket.arnForObjects(`${PERSONA_IMAGES_PREFIX}*`)],
     }),
   ],
