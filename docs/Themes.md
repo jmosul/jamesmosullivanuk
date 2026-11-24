@@ -17,7 +17,9 @@ TypeScript, and only `tokens.css` names a theme.
 | `src/styles/components.css` | Shared classes: `.site-header`, `.page`, `.card`, `.button`, `.button--quiet`, `.toggle`, `.toggle-group`, `.eyebrow`. Each rule is written once. |
 | `src/styles/amplify.css` | Points Amplify UI's `--amplify-*` variables at our tokens, once, so the Authenticator follows the theme without per-theme rules. |
 | `src/styles/amplify-ui.css` | Amplify UI's stylesheet in the `amplify-ui` cascade layer, loaded with the sign-in page. Our rules are unlayered, so they win regardless of load order. |
-| `src/theme/` | `THEMES`, `DEFAULT_THEME`, `ThemeProvider` / `useTheme()` and `ThemeSwitcher`. |
+| `src/theme/themes.ts` | `THEMES`, `DEFAULT_THEME`, `THEME_LABELS` and storage. |
+| `src/theme/traits.ts` | `THEME_TRAITS`: per-theme rules and wording that aren't looks (see below). |
+| `src/theme/ThemeProvider.tsx` | `ThemeProvider`, `useTheme()` and `useThemeOverride()`. |
 
 Where an Amplify part plays the same role as one of ours, it joins our
 selector list rather than getting its own copy, e.g.
@@ -36,11 +38,33 @@ selector list rather than getting its own copy, e.g.
 - Fonts are all declared up front, but browsers only download a font face
   when text uses it, so a visitor fetches only their theme's fonts.
 
+### Pages that wear a persona's theme
+
+`useThemeOverride(theme)` shows the page in that theme while the calling
+component is mounted and restores the visitor's own theme afterwards, without
+storing anything. The persona editor uses it with the draft's theme, so the
+whole admin UI switches as the theme toggle is changed. `ThemeSwitcher` hides
+itself while an override is active.
+
+### Traits: differences that aren't looks
+
+Some differences are rules or wording, not styling: fantasy panels are left
+off the homepage without an image; sci-fi panels have a symbol and pick an
+accent from a fixed set. These live in `THEME_TRAITS` in
+`src/theme/traits.ts`, a `Record<Theme, ThemeTraits>`. Components ask
+`traits.panelNeedsImage` or `traits.panelAccents.length > 0`, never
+`theme === 'fantasy'`, so a new theme is a compile error until its traits
+are filled in, and no component needs touching.
+
+The order of preference is tokens, then traits, then a per-theme component
+(below). CSS is preferred, but not at the cost of contorted markup or CSS.
+
 ### Adding a theme
 
 1. Add a block to `tokens.css` that sets every property `:root` does.
 2. Add its name to `THEMES` and a label to `THEME_LABELS`.
-3. Import its fonts in `src/main.tsx`.
+3. Add its entry to `THEME_TRAITS`.
+4. Import its fonts in `src/main.tsx`.
 
 Nothing else should change. If a component needs a new difference, add a
 token for it rather than a `[data-theme]` selector in a component file.

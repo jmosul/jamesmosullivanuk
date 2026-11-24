@@ -3,6 +3,15 @@ import type { Schema } from '../../amplify/data/resource'
 import type { Theme } from '../theme'
 
 export type Persona = Schema['Persona']['type']
+export type PersonaStatus = Persona['status']
+
+export const PERSONA_STATUSES: readonly PersonaStatus[] = ['draft', 'published', 'archived']
+
+export const PERSONA_STATUS_LABELS: Record<PersonaStatus, string> = {
+  draft: 'Draft',
+  published: 'Published',
+  archived: 'Archived',
+}
 
 /** What the admin types in when starting a persona. */
 export interface NewPersona {
@@ -19,6 +28,9 @@ export interface PersonaStore {
   /** Every persona, whatever its status. */
   list(): Promise<Persona[]>
   create(record: PersonaRecord): Promise<Persona>
+  /** Replaces every field of the persona with this id. */
+  update(id: string, record: PersonaRecord): Promise<Persona>
+  remove(id: string): Promise<void>
 }
 
 /** Lowercase letters, digits and single hyphens; 'persona' when nothing usable is left. */
@@ -114,6 +126,22 @@ export function createPersonaStore(): PersonaStore {
       }
 
       return data
+    },
+    async update(id, record) {
+      const { data, errors } = await Persona.update({ ...record, id })
+
+      if (errors?.length || !data) {
+        throw new Error(errors?.[0]?.message ?? 'The persona was not saved.')
+      }
+
+      return data
+    },
+    async remove(id) {
+      const { errors } = await Persona.delete({ id })
+
+      if (errors?.length) {
+        throw new Error(errors[0].message)
+      }
     },
   }
 }

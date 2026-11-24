@@ -1,3 +1,4 @@
 export * from './themes'
-export { ThemeProvider, useTheme } from './ThemeProvider'
+export * from './traits'
+export { ThemeProvider, useTheme, useThemeOverride } from './ThemeProvider'
 export { ThemeSwitcher } from './ThemeSwitcher'

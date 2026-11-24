@@ -279,10 +279,12 @@
 
 .field {
   display: grid;
+  align-content: start;
   gap: 6px;
 }
 
-.field label {
+.field label,
+.field-label {
   color: var(--color-muted);
   font-family: var(--font-label);
   font-size: var(--label-size);
@@ -307,4 +309,426 @@
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
+}
+
+/* ── Shared admin controls ── */
+
+.field-label {
+  margin: 0;
+}
+
+.field-help {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 0.9375rem;
+  line-height: 1.45;
+}
+
+.field-help p {
+  margin: 0;
+}
+
+.field-aside {
+  white-space: nowrap;
+}
+
+.field-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
+  gap: 20px 16px;
+}
+
+.field-row--start {
+  align-items: start;
+}
+
+.field--inline {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.field--inline select {
+  width: auto;
+}
+
+.field--mono input {
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+}
+
+.field--symbol {
+  max-width: 12rem;
+}
+
+.field--symbol input {
+  font-family: var(--font-display);
+  font-weight: var(--display-weight);
+}
+
+.field textarea {
+  min-height: 116px;
+  resize: vertical;
+}
+
+.button:disabled,
+.icon-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.button--danger,
+.button--danger:hover {
+  background: var(--color-danger);
+  color: var(--color-on-danger);
+}
+
+.icon-button {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius);
+  background: var(--color-surface-raised);
+  color: var(--color-ink);
+  cursor: pointer;
+}
+
+.icon-button:not(:disabled):hover {
+  background: var(--color-accent-soft);
+}
+
+.icon {
+  flex: none;
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  color: var(--color-body);
+  cursor: pointer;
+}
+
+.check input {
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  accent-color: var(--color-accent);
+}
+
+.notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: var(--radius);
+  background: var(--color-warn-bg);
+  color: var(--color-warn-ink);
+  font-size: 0.9375rem;
+}
+
+.notice .icon {
+  margin-top: 3px;
+}
+
+.notice--list {
+  display: block;
+}
+
+.notice--quiet {
+  background: var(--color-surface-raised);
+  color: var(--color-body);
+}
+
+.notice-heading {
+  margin: 0;
+  font-weight: 500;
+}
+
+.notice ul {
+  margin: 4px 0 0;
+  padding-left: 1.2em;
+}
+
+.badge {
+  flex: none;
+  padding: 4px 10px;
+  border-radius: var(--radius);
+  background: var(--color-warn-bg);
+  color: var(--color-warn-ink);
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+
+.empty-note {
+  margin: 0;
+  padding: 20px;
+  background: var(--color-surface-raised);
+  color: var(--color-muted);
+  text-align: center;
+}
+
+/* ── Persona editor ── */
+
+.editor-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px 20px;
+  padding: 18px clamp(16px, 5.5vw, 88px);
+  background: var(--color-surface);
+}
+
+.editor-title {
+  flex: 1 1 240px;
+  font-size: 1.875rem;
+  line-height: 1.1;
+}
+
+.editor-save-state {
+  color: var(--color-muted);
+  font-size: 0.9375rem;
+}
+
+.editor {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 24px;
+  width: min(100%, 1400px);
+  margin: 0 auto;
+  padding: 28px clamp(16px, 3vw, 40px) 72px;
+}
+
+.editor-notes {
+  display: grid;
+  flex: 1 1 100%;
+  gap: 12px;
+}
+
+.editor-section {
+  display: flex;
+  flex: 1 1 min(100%, 440px);
+  flex-direction: column;
+  gap: 20px;
+  min-width: 0;
+  padding: 28px;
+}
+
+.editor-section--wide {
+  flex: 1.35 1 min(100%, 560px);
+}
+
+.section-title {
+  font-size: 1.75rem;
+  line-height: 1.1;
+}
+
+.section-count {
+  color: var(--color-muted);
+  font-size: 0.7em;
+}
+
+.section-help {
+  margin: 6px 0 0;
+  color: var(--color-muted);
+  font-size: 0.9375rem;
+}
+
+.section-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.section-head > div {
+  flex: 1 1 300px;
+}
+
+.section-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  padding-top: 20px;
+  border-top: 1px solid var(--color-line);
+}
+
+.section-footer .section-help {
+  flex: 1 1 200px;
+  margin: 0;
+}
+
+.link-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.link-list > .button {
+  align-self: flex-start;
+}
+
+/* Rows sit on the page colour, so inputs and icon buttons stand out on both themes. */
+.link-row,
+.panel-row {
+  border-radius: var(--radius);
+  background: var(--color-bg);
+}
+
+.link-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 10px;
+  padding: 14px;
+}
+
+.link-label {
+  flex: 1 1 150px;
+}
+
+.link-href {
+  flex: 2 1 220px;
+}
+
+.panel-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.panel-row[data-open='true'] {
+  background: linear-gradient(var(--color-accent-soft), var(--color-accent-soft)), var(--color-bg);
+}
+
+.panel-row-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+}
+
+.panel-row-number {
+  flex: none;
+  width: 24px;
+  color: var(--color-muted);
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: 0.8125rem;
+}
+
+.panel-row-toggle {
+  display: flex;
+  flex: 1 1 8rem;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 2px;
+  min-width: 0;
+  min-height: 48px;
+  padding: 4px 6px;
+  border: 0;
+  background: transparent;
+  color: var(--color-ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.panel-row-title {
+  font-family: var(--font-display);
+  font-size: 1.1875rem;
+  line-height: 1.15;
+}
+
+.panel-row-subtitle {
+  color: var(--color-muted);
+  font-size: 0.875rem;
+}
+
+/* --panel-accent is set inline from the panel's own colour. */
+.panel-thumb {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  width: 42px;
+  height: 56px;
+  overflow: hidden;
+  background: var(--color-surface);
+  color: var(--panel-accent, var(--color-accent));
+  clip-path: var(--shape-thumb);
+}
+
+.panel-thumb[data-missing='true'] {
+  align-items: center;
+  justify-content: center;
+  background: var(--color-warn-bg);
+  color: var(--color-warn-ink);
+}
+
+.panel-thumb-bar {
+  height: 3px;
+  background: currentColor;
+}
+
+.panel-thumb-symbol {
+  padding: 6px 0 0 6px;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: var(--display-weight);
+  line-height: 1;
+}
+
+.panel-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 6px 16px 20px;
+}
+
+.panel-image {
+  display: grid;
+  justify-items: start;
+  gap: 10px;
+}
+
+.swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* --swatch is set inline; the tick is dark because every accent is bright. */
+.swatch {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius);
+  background: var(--swatch);
+  color: #04121a;
+  cursor: pointer;
+}
+
+.swatch[aria-pressed='true'] {
+  outline: 2px solid var(--color-ink);
+  outline-offset: 2px;
 }

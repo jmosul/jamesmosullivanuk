@@ -22,6 +22,8 @@ function fakeStore(personas: Persona[]): PersonaStore & { created: Persona[] } {
 
       return persona
     },
+    update: async (id, record) => ({ ...record, id }) as Persona,
+    remove: async () => {},
   }
 }
 
