@@ -10,6 +10,13 @@ const SignInScreen = lazy(() =>
   import('./screens/SignInScreen').then((module) => ({ default: module.SignInScreen })),
 )
 
+const AdminPersonasScreen = lazy(() =>
+  import('./screens/AdminPersonasScreen').then((module) => ({ default: module.AdminPersonasScreen })),
+)
+const AdminPersonaScreen = lazy(() =>
+  import('./screens/AdminPersonaScreen').then((module) => ({ default: module.AdminPersonaScreen })),
+)
+
 interface AppProps {
   /** Whether Amplify found auth outputs to sign in against. */
   authConfigured: boolean
@@ -26,6 +33,22 @@ export function AppRoutes({ authConfigured }: AppProps) {
           element={
             <Suspense fallback={null}>
               <SignInScreen configured={authConfigured} />
+            </Suspense>
+          }
+        />
+        <Route
+          path={paths.adminPersonas}
+          element={
+            <Suspense fallback={null}>
+              <AdminPersonasScreen configured={authConfigured} />
+            </Suspense>
+          }
+        />
+        <Route
+          path={`${paths.adminPersonas}/:personaId`}
+          element={
+            <Suspense fallback={null}>
+              <AdminPersonaScreen configured={authConfigured} />
             </Suspense>
           }
         />

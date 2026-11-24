@@ -5,6 +5,7 @@ import { ThemeSwitcher } from '../theme'
 /** The header every page shares, with the theme switcher. */
 export function SiteLayout() {
   const { pathname } = useLocation()
+
   return (
     <>
       <header className="site-header">

@@ -4,6 +4,7 @@ import { useTheme } from './ThemeProvider'
 /** One button per theme; the pressed one is current. */
 export function ThemeSwitcher() {
   const { theme, setTheme } = useTheme()
+
   return (
     <div role="group" aria-label="Theme" className="toggle-group">
       {THEMES.map((name) => (

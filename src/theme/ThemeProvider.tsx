@@ -36,6 +36,10 @@ export function ThemeProvider({
 
 export function useTheme(): ThemeContextValue {
   const value = use(ThemeContext)
-  if (!value) throw new Error('useTheme() must be used inside a ThemeProvider')
+
+  if (!value) {
+    throw new Error('useTheme() must be used inside a ThemeProvider')
+  }
+
   return value
 }

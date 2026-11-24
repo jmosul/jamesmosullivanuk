@@ -12,7 +12,11 @@ const found = import.meta.glob<Outputs>('../amplify_outputs.json', {
 
 /** Configures Amplify from amplify_outputs.json; false when there's no auth to configure. */
 export function configureAmplify(outputs: Outputs | undefined = Object.values(found)[0]): boolean {
-  if (!outputs || typeof outputs !== 'object' || !('auth' in outputs)) return false
+  if (!outputs || typeof outputs !== 'object' || !('auth' in outputs)) {
+    return false
+  }
+
   Amplify.configure(outputs)
+
   return true
 }
