@@ -54,10 +54,10 @@ export function HomePage({ source }: { source: HomePersonaSource }) {
     touch.y = event.touches[0].clientY
   }
 
-  // A swipe left or up brings the next panel forward.
+  // A swipe right or up brings the next panel forward.
   const onTouchMove = (event: TouchEvent) => {
     const { clientX, clientY } = event.touches[0]
-    const dx = touch.x - clientX
+    const dx = clientX - touch.x
     const dy = touch.y - clientY
     touch.x = clientX
     touch.y = clientY
