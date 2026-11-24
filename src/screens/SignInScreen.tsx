@@ -1,4 +1,6 @@
 import { Authenticator } from '@aws-amplify/ui-react'
+import { Navigate } from 'react-router'
+import { paths } from '../routes'
 import '../styles/amplify-ui.css'
 
 /**
@@ -11,19 +13,8 @@ export function SignInScreen({ configured }: { configured: boolean }) {
     <main className="page">
       <h1 className="page-title">Sign in</h1>
       {configured ? (
-        // Authenticator brings its own provider; nothing else reads auth state yet.
         <Authenticator hideSignUp>
-          {({ user, signOut }) => (
-            <section className="card" aria-labelledby="signed-in-heading">
-              <p className="eyebrow" id="signed-in-heading">
-                Signed in
-              </p>
-              <p>{user?.signInDetails?.loginId ?? user?.username}</p>
-              <button type="button" className="button button--quiet" onClick={signOut}>
-                Sign out
-              </button>
-            </section>
-          )}
+          <Navigate to={paths.admin} replace />
         </Authenticator>
       ) : (
         <p className="card" role="status">

@@ -1,5 +1,7 @@
 import { lazy, Suspense } from 'react'
-import { BrowserRouter, Route, Routes } from 'react-router'
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router'
+import { AdminGate, RequireSuperAdmin } from './admin/AdminGate'
+import { AuthProvider } from './auth'
 import { paths } from './routes'
 import { HomeScreen } from './screens/HomeScreen'
 import { SiteLayout } from './screens/SiteLayout'
@@ -25,35 +27,43 @@ interface AppProps {
 /** Every page. Render inside a router and a ThemeProvider. */
 export function AppRoutes({ authConfigured }: AppProps) {
   return (
-    <Routes>
-      <Route element={<SiteLayout />}>
-        <Route path={paths.home} element={<HomeScreen configured={authConfigured} />} />
-        <Route
-          path={paths.signIn}
-          element={
-            <Suspense fallback={null}>
-              <SignInScreen configured={authConfigured} />
-            </Suspense>
-          }
-        />
-        <Route
-          path={paths.adminPersonas}
-          element={
-            <Suspense fallback={null}>
-              <AdminPersonasScreen configured={authConfigured} />
-            </Suspense>
-          }
-        />
-        <Route
-          path={`${paths.adminPersonas}/:personaId`}
-          element={
-            <Suspense fallback={null}>
-              <AdminPersonaScreen configured={authConfigured} />
-            </Suspense>
-          }
-        />
-      </Route>
-    </Routes>
+    <AuthProvider configured={authConfigured}>
+      <Routes>
+        <Route element={<SiteLayout />}>
+          <Route path={paths.home} element={<HomeScreen configured={authConfigured} />} />
+          <Route
+            path={paths.signIn}
+            element={
+              <Suspense fallback={null}>
+                <SignInScreen configured={authConfigured} />
+              </Suspense>
+            }
+          />
+          <Route path={paths.admin} element={<AdminGate />}>
+            <Route index element={<Navigate to={paths.adminPersonas} replace />} />
+            <Route path={paths.adminPersonas} element={<RequireSuperAdmin />}>
+              <Route
+                index
+                element={
+                  <Suspense fallback={null}>
+                    <AdminPersonasScreen />
+                  </Suspense>
+                }
+              />
+              <Route
+                path=":personaId"
+                element={
+                  <Suspense fallback={null}>
+                    <AdminPersonaScreen />
+                  </Suspense>
+                }
+              />
+            </Route>
+            <Route path="*" element={null} />
+          </Route>
+        </Route>
+      </Routes>
+    </AuthProvider>
   )
 }
 

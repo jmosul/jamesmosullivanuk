@@ -1,4 +1,7 @@
-import { Link, Outlet, useLocation } from 'react-router'
+import { signOut } from 'aws-amplify/auth'
+import { useState } from 'react'
+import { Link, Outlet, useMatch } from 'react-router'
+import { useAuthStatus } from '../auth'
 import { MONOGRAMS } from '../components/ornaments'
 import { paths } from '../routes'
 import { SITE_NAME } from '../site'
@@ -8,8 +11,7 @@ const SURNAME = SITE_NAME.slice(SITE_NAME.lastIndexOf(' ') + 1)
 
 /** The header every page shares. On the homepage it floats over the stage. */
 export function SiteLayout() {
-  const { pathname } = useLocation()
-  const home = pathname === paths.home
+  const home = useMatch(paths.home) !== null
 
   return (
     <>
@@ -21,15 +23,51 @@ export function SiteLayout() {
         <div className="header-actions">
           {/* The homepage's persona toggles choose the theme there. */}
           {!home && <ThemeSwitcher />}
-          {pathname !== paths.signIn && (
-            <Link to={paths.signIn} className="button">
-              <KeyIcon />
-              Sign in
-            </Link>
-          )}
+          <HeaderAuthAction />
         </div>
       </header>
       <Outlet />
+    </>
+  )
+}
+
+function HeaderAuthAction() {
+  const status = useAuthStatus()
+  const signInPage = useMatch(paths.signIn)
+  const adminPage = useMatch(`${paths.admin}/*`)
+
+  if (signInPage || status === 'checking') {
+    return null
+  }
+
+  if (adminPage) {
+    return status === 'signedIn' ? <SignOutButton /> : null
+  }
+
+  const signedIn = status === 'signedIn'
+
+  return (
+    <Link to={signedIn ? paths.admin : paths.signIn} className="button">
+      <KeyIcon />
+      {signedIn ? 'Admin' : 'Sign in'}
+    </Link>
+  )
+}
+
+function SignOutButton() {
+  const [failed, setFailed] = useState(false)
+
+  function handleSignOut() {
+    setFailed(false)
+    void signOut().catch(() => setFailed(true))
+  }
+
+  return (
+    <>
+      {failed && <span role="alert">Couldn’t sign out. Try again.</span>}
+      <button type="button" className="button" onClick={handleSignOut}>
+        Sign out
+      </button>
     </>
   )
 }
