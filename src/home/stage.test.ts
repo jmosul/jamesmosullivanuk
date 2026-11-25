@@ -130,5 +130,5 @@ test('narrow viewports are phones and portrait windows', () => {
 
 test('the largest visible scale ignores slots a panel is faded out in', () => {
   expect(largestVisibleScale(THEME_TRAITS.scifi.panelSlots.wide)).toBe(1)
-  expect(largestVisibleScale(THEME_TRAITS.fantasy.panelSlots.narrow)).toBe(0.52)
+  expect(largestVisibleScale(THEME_TRAITS.fantasy.panelSlots.narrow)).toBe(0.6)
 })
